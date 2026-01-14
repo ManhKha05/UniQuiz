@@ -61,5 +61,5 @@ CREATE TABLE user_answer (
   PRIMARY KEY (result_id, question_id, answer_id),
   FOREIGN KEY (result_id) REFERENCES result(id) ON DELETE CASCADE,
   FOREIGN KEY (question_id) REFERENCES question(id),
-  FOREIGN KEY (answer_id) REFERENCES answer(ids)
+  FOREIGN KEY (answer_id) REFERENCES answer(id)
 );
