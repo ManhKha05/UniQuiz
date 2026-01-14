@@ -4,7 +4,7 @@ CREATE TABLE user (
   password VARCHAR(255) NOT NULL,
   full_name VARCHAR(100),
   role ENUM('USER','ADMIN'),
-  status int,
+  status status ENUM('ACTIVE','BLOCKED') DEFAULT 'ACTIVE',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -22,7 +22,7 @@ CREATE TABLE exam (
   subject_id INT NOT NULL,
   title VARCHAR(255) NOT NULL,
   duration INT NOT NULL,
-  status ENUM('DRAFT','PUBLISHED'),
+  status ENUM('DRAFT','PUBLISHED') DEFAULT 'DRAFT',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (subject_id) REFERENCES subject(id)
 );
@@ -39,7 +39,7 @@ CREATE TABLE answer (
   id INT PRIMARY KEY AUTO_INCREMENT,
   question_id INT NOT NULL,
   content TEXT NOT NULL,
-  is_correct BOOLEAN,
+  is_correct BOOLEAN DEFAULT FALSE,
   FOREIGN KEY (question_id) REFERENCES question(id)
 );
 
@@ -61,5 +61,5 @@ CREATE TABLE user_answer (
   PRIMARY KEY (result_id, question_id, answer_id),
   FOREIGN KEY (result_id) REFERENCES result(id) ON DELETE CASCADE,
   FOREIGN KEY (question_id) REFERENCES question(id),
-  FOREIGN KEY (answer_id) REFERENCES answer(id)
+  FOREIGN KEY (answer_id) REFERENCES answer(ids)
 );
