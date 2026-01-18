@@ -8,14 +8,17 @@ import { IoIosPaper } from "react-icons/io";
 import { FaCheckDouble } from "react-icons/fa6";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import FeaturesImg from "../../assets/images/Features.png"
-import RegisterImg from "../../assets/images/Register.png"
+import registerImg from "../../assets/images/Register.png"
 import Avt1 from "../../assets/images/Avt1.png"
 import Avt2 from "../../assets/images/Avt2.png"
 import Avt3 from "../../assets/images/Avt3.png"
-import Button from "../../components/button";
+import { useDispatch } from "react-redux"
+import {register} from "../../actions/authModal"
 
 
 function Home() {
+  const dispatch = useDispatch();
+
   return (
     <>
       <SubjectList />
@@ -203,45 +206,45 @@ function Home() {
         </div>
       </div>
 
-      <div className="register">
+      <div className="registerbox">
         <div className="container">
           <Row>
             <Col span={12}>
-              <div className="register__content">
-                <div className="register__title">
-                  <div className="register__title-sub">
-                    <h2 className="register__title-dangky">
+              <div className="registerbox__content">
+                <div className="registerbox__title">
+                  <div className="registerbox__title-sub">
+                    <h2 className="registerbox__title-dangky">
                       Đăng ký
                     </h2>
-                    <h2 className="register__title-taikhoan">
+                    <h2 className="registerbox__title-taikhoan">
                       tài khoản
                     </h2>
                   </div>
-                  <h2 className="register__title-free">FREE</h2>
+                  <h2 className="registerbox__title-free">FREE</h2>
                 </div>
-                <ul className="register__list">
-                  <li className="register__item">
+                <ul className="registerbox__list">
+                  <li className="registerbox__item">
                     <FaCheckDouble />
                     <span>Làm bài trắc nghiệm không giới hạn</span>
                   </li>
-                  <li className="register__item">
+                  <li className="registerbox__item">
                     <FaCheckDouble />
                     <span>Nhận kết quả chấm điểm ngay lập tức</span>
                   </li>
-                  <li className="register__item">
+                  <li className="registerbox__item">
                     <FaCheckDouble />
                     <span>Đề thi được chọn lọc và cập nhật thường xuyên</span>
                   </li>
-                  <li className="register__item">
+                  <li className="registerbox__item">
                     <FaCheckDouble />
                     <span>Theo dõi tiến bộ học tập theo thời gian</span>
                   </li>
                 </ul>
-                <Button text="Đăng ký ngay" link="/register" />
+                <button onClick={() => dispatch(register())} className="button">Đăng ký ngay</button>
               </div>
             </Col>
-            <Col span={12} className="register__image">
-              <img src={RegisterImg} alt="" />
+            <Col span={12} className="registerbox__image">
+              <img src={registerImg} alt="" />
             </Col>
           </Row>
         </div>

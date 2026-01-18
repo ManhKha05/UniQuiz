@@ -3,6 +3,7 @@ import AboutUs from "../pages/AboutUs";
 import Contact from "../pages/Contact";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
+import ResetPassword from "../pages/ResetPassword";
 
 export const routes = [
   {
@@ -22,6 +23,10 @@ export const routes = [
         element: <Contact/>
       }
     ]
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPassword />
   },
   {
     path: '*',

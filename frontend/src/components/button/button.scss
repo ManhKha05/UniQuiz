@@ -9,6 +9,9 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease-in-out;
+  background-color: #fff;
+  font-weight: 600;
+  cursor: pointer;
 
   &:hover {
     background-color: var(--color-one);

@@ -1,0 +1,55 @@
+.authmodal {
+  // min-width: 500px !important;
+  text-align: center;
+
+  &__title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+
+  &__input {
+    position: relative;
+    padding-left: 40px;
+    font-size: 18px;
+    background-color: #fbfbfb;
+    border: 1px solid #f1f3f5;
+  }
+
+  &__icon {
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    z-index: 99;
+    font-size: 20px;
+    opacity: 0.8;
+  }
+
+  &__button {
+    background-color: var(--color-one);
+    font-size: 20px;
+    padding: 18px 20px;
+
+    &:hover {
+      background-color: var(--color-one) !important;
+      transform: scale(1.1);
+    }
+  }
+
+  &__footer {
+    font-size: 16px;
+
+    span {
+      color: var(--color-two);
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .ant-form-item-explain-error {
+    text-align: start
+  }
+}

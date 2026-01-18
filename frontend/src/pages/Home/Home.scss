@@ -137,8 +137,8 @@
 
 // End Stats
 
-// Start Register
-.register {
+// Start registerbox
+.registerbox {
   margin: 100px 0;
 
   .container {
@@ -198,9 +198,14 @@
       top: -120px;
     }
   }
+
+  .button {
+    margin-top: 20px;
+    font-size: 18px;
+  }
 }
 
-// End Register
+// End registerbox
 
 // Start Testimonials
 .testimonials {
