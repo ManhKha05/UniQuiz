@@ -4,13 +4,12 @@ CREATE TABLE user (
   password VARCHAR(255) NOT NULL,
   full_name VARCHAR(100),
   role ENUM('USER','ADMIN'),
-  status status ENUM('ACTIVE','BLOCKED') DEFAULT 'ACTIVE',
+  status ENUM('ACTIVE','BLOCKED') DEFAULT 'ACTIVE',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE subject (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  code VARCHAR(20) UNIQUE,
   name VARCHAR(100) NOT NULL,
   description TEXT,
   image_url TEXT,
