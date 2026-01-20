@@ -3,6 +3,8 @@ CREATE TABLE user (
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   full_name VARCHAR(100),
+  email varchar(255) not null,
+  phone varchar(100),
   role ENUM('USER','ADMIN'),
   status ENUM('ACTIVE','BLOCKED') DEFAULT 'ACTIVE',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -61,4 +63,15 @@ CREATE TABLE user_answer (
   FOREIGN KEY (result_id) REFERENCES result(id) ON DELETE CASCADE,
   FOREIGN KEY (question_id) REFERENCES question(id),
   FOREIGN KEY (answer_id) REFERENCES answer(id)
+);
+
+CREATE TABLE contact_feedback (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(10),
+    subject VARCHAR(255),
+    message TEXT NOT NULL,
+    status ENUM('PENDING', 'RESOLVED') DEFAULT 'PENDING',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
