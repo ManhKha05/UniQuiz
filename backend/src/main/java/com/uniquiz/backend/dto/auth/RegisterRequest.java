@@ -1,4 +1,4 @@
-package com.uniquiz.backend.dto.user;
+package com.uniquiz.backend.dto.auth;
 
 import lombok.Data;
 

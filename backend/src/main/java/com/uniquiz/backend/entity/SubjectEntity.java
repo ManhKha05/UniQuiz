@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "subject")
 @Getter
@@ -29,4 +31,6 @@ public class SubjectEntity {
     @Column(name = "status")
     private  String status;
 
+    @OneToMany(mappedBy = "subject",  fetch = FetchType.LAZY)
+    List<ExamEntity> exams;
 }

@@ -1,6 +1,6 @@
 package com.uniquiz.backend.controller;
 
-import com.uniquiz.backend.dto.user.RegisterRequest;
+import com.uniquiz.backend.dto.auth.RegisterRequest;
 import com.uniquiz.backend.entity.UserEntity;
 import com.uniquiz.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

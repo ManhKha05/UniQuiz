@@ -3,7 +3,7 @@ package com.uniquiz.backend.dto.subject;
 import lombok.Data;
 
 @Data
-public class SubjectResponse {
+public class SubjectDTO {
     private Integer id;
     private String name;
     private String description;

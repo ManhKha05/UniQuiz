@@ -1,9 +1,8 @@
 package com.uniquiz.backend.controller;
 
 import com.uniquiz.backend.dto.jwt.JwtResponse;
-import com.uniquiz.backend.dto.user.LoginRequest;
+import com.uniquiz.backend.dto.auth.LoginRequest;
 import com.uniquiz.backend.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,7 +39,7 @@ public class AuthController {
         String token = jwtUtil.generateToken(userDetails);
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
-        JwtResponse jwtResponse = new JwtResponse(token, role);
+        JwtResponse jwtResponse = new JwtResponse(token, role, userDetails.getUsername());
         System.out.println(jwtResponse);
 
         return ResponseEntity.ok(jwtResponse);

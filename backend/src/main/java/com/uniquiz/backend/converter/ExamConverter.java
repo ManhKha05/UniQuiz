@@ -1,18 +1,18 @@
 package com.uniquiz.backend.converter;
 
-import com.uniquiz.backend.dto.auth.RegisterRequest;
-import com.uniquiz.backend.entity.UserEntity;
+import com.uniquiz.backend.dto.exam.ExamDTO;
+import com.uniquiz.backend.entity.ExamEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserConverter {
+public class ExamConverter {
 
     @Autowired
     private ModelMapper modelMapper;
 
-    public UserEntity convert(RegisterRequest registerRequest) {
-        return modelMapper.map(registerRequest, UserEntity.class);
+    public ExamDTO toDTO(ExamEntity examEntity) {
+        return modelMapper.map(examEntity, ExamDTO.class);
     }
 }

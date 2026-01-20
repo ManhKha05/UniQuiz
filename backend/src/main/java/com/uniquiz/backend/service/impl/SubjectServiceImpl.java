@@ -1,11 +1,10 @@
 package com.uniquiz.backend.service.impl;
 
 import com.uniquiz.backend.converter.SubjectConverter;
-import com.uniquiz.backend.dto.subject.SubjectResponse;
+import com.uniquiz.backend.dto.subject.SubjectDTO;
 import com.uniquiz.backend.entity.SubjectEntity;
 import com.uniquiz.backend.repository.SubjectRepository;
 import com.uniquiz.backend.service.SubjectService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,12 +23,18 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectResponse> getSubjects() {
+    public List<SubjectDTO> getSubjects() {
         List<SubjectEntity> subjectEntities = subjectRepository.findAllByStatus("ACTIVE");
-        List<SubjectResponse> subjectResponses = new ArrayList<>();
+        List<SubjectDTO> subjectDTOS = new ArrayList<>();
         for (SubjectEntity subjectEntity : subjectEntities) {
-            subjectResponses.add(subjectConverter.convert(subjectEntity));
+            subjectDTOS.add(subjectConverter.toDTO(subjectEntity));
         }
-        return subjectResponses;
+        return subjectDTOS;
+    }
+
+    @Override
+    public SubjectDTO getSubjectById(Integer id) {
+        SubjectEntity subjectEntity = subjectRepository.findById(id).orElseThrow();
+        return  subjectConverter.toDTO(subjectEntity);
     }
 }

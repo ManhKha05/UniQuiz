@@ -1,7 +1,7 @@
 package com.uniquiz.backend.service.impl;
 
 import com.uniquiz.backend.converter.UserConverter;
-import com.uniquiz.backend.dto.user.RegisterRequest;
+import com.uniquiz.backend.dto.auth.RegisterRequest;
 import com.uniquiz.backend.entity.UserEntity;
 import com.uniquiz.backend.repository.UserRepository;
 import com.uniquiz.backend.service.UserService;

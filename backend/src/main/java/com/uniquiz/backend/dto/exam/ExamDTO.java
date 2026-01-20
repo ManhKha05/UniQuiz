@@ -1,0 +1,20 @@
+package com.uniquiz.backend.dto.exam;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ExamDTO {
+    private Integer id;
+    private String title;
+    private Integer duration;
+    private String status;
+    private LocalDate createdDate;
+}
