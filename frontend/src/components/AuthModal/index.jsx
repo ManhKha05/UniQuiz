@@ -4,7 +4,7 @@ import Register from "../Register";
 import "./AuthModal.scss";
 import ForgotPassword from "../ForgotPassword";
 import { useDispatch, useSelector } from "react-redux";
-import { close } from "../../actions/authModal";
+import { closeAuthModal } from "../../actions/authModal";
 
 function AuthModal() {
   const modal = useSelector(state => state.AuthModalReducer);
@@ -13,7 +13,7 @@ function AuthModal() {
 
   const handleCancel = () => {
     // setIsModalOpen(state.open);
-    dispatch(close());
+    dispatch(closeAuthModal());
   };
 
 

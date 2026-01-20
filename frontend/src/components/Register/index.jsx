@@ -6,7 +6,7 @@ import { FaPhone } from "react-icons/fa6";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import "./Register.scss"
 import { useDispatch } from "react-redux";
-import { login } from "../../actions/authModal";
+import { loginModal } from "../../actions/authModal";
 import { post } from "../../utils/request";
 
 function Register() {
@@ -18,7 +18,6 @@ function Register() {
     if (!res.ok) {
       return;
     }
-    const data = await res.json();
     messageApi.success({
       style: {
         fontSize: '16px'
@@ -84,7 +83,7 @@ function Register() {
             Đăng ký
           </Button>
         </Form.Item>
-        <p className="authmodal__footer">Bạn đã có tài khoản? <span onClick={() => dispatch(login())}>Đăng nhập ngay</span></p>
+        <p className="authmodal__footer">Bạn đã có tài khoản? <span onClick={() => dispatch(loginModal())}>Đăng nhập ngay</span></p>
       </Form>
       {/* </Modal> */}
     </>

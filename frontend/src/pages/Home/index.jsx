@@ -13,7 +13,7 @@ import Avt1 from "../../assets/images/Avt1.png"
 import Avt2 from "../../assets/images/Avt2.png"
 import Avt3 from "../../assets/images/Avt3.png"
 import { useDispatch } from "react-redux"
-import {register} from "../../actions/authModal"
+import {registerModal} from "../../actions/authModal"
 
 
 function Home() {
@@ -240,7 +240,7 @@ function Home() {
                     <span>Theo dõi tiến bộ học tập theo thời gian</span>
                   </li>
                 </ul>
-                <button onClick={() => dispatch(register())} className="button">Đăng ký ngay</button>
+                <button onClick={() => dispatch(registerModal())} className="button">Đăng ký ngay</button>
               </div>
             </Col>
             <Col span={12} className="registerbox__image">

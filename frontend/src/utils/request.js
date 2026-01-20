@@ -9,8 +9,8 @@ export const get = async (path) => {
       ...(token && {Authorization:  `Bearer ${token}`})
     }
   });
-  const result = await res.json();
-  return result;
+  // const result = await res.json();
+  return res;
 }
 
 export const post = async (path, options) => {

@@ -1,7 +1,7 @@
-import Button from "../../../components/Button";
 import { Col, Row } from "antd"
 import "./SubjectList.scss";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom"
 import { get } from "../../../utils/request"
 
 function SubjectList() {
@@ -9,8 +9,9 @@ function SubjectList() {
 
   useEffect(() => {
     const fetchApi = async () => {
-      const result = await get("subjects");
-      setSubjects(result);
+      const res = await get("subjects");
+      const data = await res.json();
+      setSubjects(data);
     }
     fetchApi();
   }, [])
@@ -34,31 +35,10 @@ function SubjectList() {
                   <div className="subjects__item">
                     <img className="subjects__item-img" src={item.imageUrl} alt={item.name} />
                     <h3 className="subjects__item-title">{item.name}</h3>
-                    <Button text="Luyện tập ngay" link="/" />
+                    <Link to={`subjects/${item.id}/exams`} className="button">Luyện tập ngay</Link>
                   </div>
                 </Col>
               ))}
-              {/* <Col span={6}>
-                <div className="subjects__item">
-                  <img className="subjects__item-img" src={SubImg} alt="" />
-                  <h3 className="subjects__item-title">Tư tưởng Hồ Chí Minh</h3>
-                  <Button text="Luyện tập ngay" link="/" />
-                </div>
-              </Col>
-              <Col span={6}>
-                <div className="subjects__item">
-                  <img className="subjects__item-img" src={SubImg} alt="" />
-                  <h3 className="subjects__item-title">Tư tưởng Hồ Chí Minh</h3>
-                  <Button text="Luyện tập ngay" link="/" />
-                </div>
-              </Col>
-              <Col span={6}>
-                <div className="subjects__item">
-                  <img className="subjects__item-img" src={SubImg} alt="" />
-                  <h3 className="subjects__item-title">Tư tưởng Hồ Chí Minh</h3>
-                  <Button text="Luyện tập ngay" link="/" />
-                </div>
-              </Col> */}
             </Row>
           </div>
         </div>

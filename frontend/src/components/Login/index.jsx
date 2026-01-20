@@ -3,9 +3,10 @@ import "./Login.scss";
 import { FaUserCircle } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { useDispatch } from "react-redux";
-import { close, forgotPassword, register } from "../../actions/authModal";
+import { closeAuthModal, forgotPasswordModal, registerModal } from "../../actions/authModal";
 import { post } from "../../utils/request";
 import { useNavigate } from "react-router-dom"
+import { loginSuccess } from "../../actions/auth";
 
 function Login() {
   const dispatch = useDispatch();
@@ -27,11 +28,14 @@ function Login() {
     const data = await res.json();
     console.log(data)
     localStorage.setItem("token", data.token)
+    localStorage.setItem("user", data.username)
+
+    dispatch(loginSuccess());
 
     if (data.role === 'ROLE_ADMIN') {
       navigate('/admin')
     } else {
-      dispatch(close())
+      dispatch(closeAuthModal())
       setTimeout(() => {
         messageApi.success({
           style: {
@@ -68,14 +72,14 @@ function Login() {
           {/* <RiLockPasswordFill className="authmodal__icon" /> */}
           <Input.Password prefix={<RiLockPasswordFill className="authmodal__icon" />} className="authmodal__input" placeholder="Nhập mật khẩu" />
         </Form.Item>
-        <p className="login__forgot" onClick={() => dispatch(forgotPassword())}>Quên mật khẩu</p>
+        <p className="login__forgot" onClick={() => dispatch(forgotPasswordModal())}>Quên mật khẩu</p>
 
         <Form.Item label={null}>
           <Button className="authmodal__button" type="primary" htmlType="submit">
             Đăng nhập
           </Button>
         </Form.Item>
-        <p className="authmodal__footer">Bạn chưa có tài khoản? <span onClick={() => dispatch(register())}>Đăng ký ngay</span></p>
+        <p className="authmodal__footer">Bạn chưa có tài khoản? <span onClick={() => dispatch(registerModal())}>Đăng ký ngay</span></p>
       </Form>
     </>
   )

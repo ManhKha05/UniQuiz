@@ -56,7 +56,7 @@ function Contact() {
                       <Form.Item
                         label="Số điện thoại"
                         name="phone"
-                        rules={[{ required: true, message: 'Không được bỏ trống' }]}
+                        rules={[{ required: false, message: 'Không được bỏ trống' }]}
                       >
                         <InputNumber style={{width: "100%"}} placeholder="Nhập số điện thoại" />
                       </Form.Item>

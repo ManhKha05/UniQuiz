@@ -3,7 +3,7 @@ import { IoIosReturnLeft } from "react-icons/io";
 import { MdEmail } from "react-icons/md";
 import "./ForgotPassword.scss"
 import { useDispatch } from "react-redux";
-import { login } from "../../actions/authModal";
+import { loginModal } from "../../actions/authModal";
 
 function ForgotPassword() {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ function ForgotPassword() {
 
   return (
     <>
-      <div className="forgotpassword__return" onClick={() => dispatch(login())}>
+      <div className="forgotpassword__return" onClick={() => dispatch(loginModal())}>
         <IoIosReturnLeft />
         <h3>Quay lại</h3>
       </div>

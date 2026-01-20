@@ -1,22 +1,22 @@
-export const login = () => {
+export const loginModal = () => {
   return {
     type: "LOGIN"
   }
 }
 
-export const register = () => {
+export const registerModal = () => {
   return {
     type: "REGISTER"
   }
 }
 
-export const forgotPassword = () => {
+export const forgotPasswordModal = () => {
   return {
     type: "FORGOT_PASSWORD"
   }
 }
 
-export const close = () => {
+export const closeAuthModal = () => {
   return {
     type: "CLOSE"
   }

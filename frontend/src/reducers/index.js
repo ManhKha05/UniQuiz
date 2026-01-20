@@ -1,8 +1,10 @@
 import AuthModalReducer from "./authModal";
+import authReducer from "./auth"
 import { combineReducers } from "redux"
 
 const allReducers = combineReducers({
-  AuthModalReducer
+  AuthModalReducer,
+  authReducer
 })
 
 export default allReducers;

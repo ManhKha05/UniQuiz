@@ -1,14 +1,14 @@
 .header {
   background-color: #fff;
   border-bottom: 1px solid #ddd;
-  box-shadow: 0 6px 12px 0 rgba(0,0,0,.078);
+  box-shadow: 0 6px 12px 0 rgba(0, 0, 0, .078);
   font-weight: 600;
   height: 100px;
   position: sticky;
   top: 0;
   z-index: 99;
   font-size: 18px;
-  
+
   & .container {
     height: 100%;
     display: flex;
@@ -33,11 +33,39 @@
   &__menu {
     display: flex;
   }
+
   &__item {
     margin-right: 50px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+    }
   }
 
   & .button {
     font-size: 16px;
+  }
+
+  &__user {
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--color-one);
+    display: flex;
+    align-items: center;
+
+    svg {
+      font-size: 35px;
+    }
+  }
+}
+
+.dropdown {
+  max-height: 150px;
+
+  &__item {
+    font-size: 16px;
+    margin: 5px;
   }
 }
