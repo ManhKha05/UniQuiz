@@ -14,7 +14,7 @@ function Register() {
   const [messageApi, contextHolder] = message.useMessage();
 
   const onFinish = async (e) => {
-    const res = await post("register", e);
+    const res = await post("auth/register", e);
     if (!res.ok) {
       return;
     }

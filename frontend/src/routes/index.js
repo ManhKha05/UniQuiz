@@ -1,6 +1,7 @@
 import LayoutDefault from "../layouts/LayoutDefault";
 import AboutUs from "../pages/AboutUs";
 import Contact from "../pages/Contact";
+import ExamHistory from "../pages/ExamHistory";
 import ExamIntro from "../pages/ExamIntro";
 import Exams from "../pages/Exams";
 import Home from "../pages/Home";
@@ -25,6 +26,10 @@ export const routes = [
         element: <ExamIntro/>
       },
       {
+        path: 'exam-history',
+        element: <ExamHistory/>
+      },
+      {
         path: 'about-us',
         element: <AboutUs />
       },
@@ -35,7 +40,7 @@ export const routes = [
     ]
   },
   {
-    path: '/reset-password',
+    path: 'auth/reset-password/:token',
     element: <ResetPassword />
   },
   {

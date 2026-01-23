@@ -1,5 +1,7 @@
+const token = localStorage.getItem("token");
+
 const init = {
-  isAuthenticated: false
+  isAuthenticated: (token ? true : false)
 }
 
 const authReducer = (state = init, action) => {

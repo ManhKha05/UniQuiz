@@ -67,5 +67,13 @@
   &__item {
     font-size: 16px;
     margin: 5px;
+
+    svg {
+      font-size: 50px;
+    }
   }
+}
+
+.ant-dropdown-menu-item {
+  min-height: 30px;
 }

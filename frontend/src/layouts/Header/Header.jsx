@@ -6,7 +6,8 @@ import { loginModal } from "../../actions/authModal";
 import AuthModal from "../../components/AuthModal";
 import { HiMiniUserCircle } from "react-icons/hi2";
 import { CiLogout } from "react-icons/ci";
-import { Dropdown } from "antd";
+import { PiStudentFill } from "react-icons/pi";
+import { Dropdown, message } from "antd";
 import { logout } from "../../actions/auth";
 import { useEffect, useState } from "react";
 import { get } from "../../utils/request";
@@ -15,6 +16,7 @@ function Header() {
   const isLogin = useSelector(state => state.authReducer);
   const dispatch = useDispatch();
   const [itemsSubjects, setItemsSubjects] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
@@ -22,6 +24,9 @@ function Header() {
   const handleLogOut = () => {
     localStorage.clear();
     dispatch(logout());
+    messageApi.success({
+      content: "Đã đăng xuất"
+    })
   }
 
   useEffect(() => {
@@ -42,20 +47,22 @@ function Header() {
   const itemsUser = [
     {
       key: 'history',
-      label: "ok"
+      icon: <PiStudentFill size={20} />,
+      label: <Link to='/exam-history' className="dropdown__item" >Lịch sử làm bài</Link>
     },
     {
       type: "divider"
     },
     {
       key: 'logout',
-      icon: <CiLogout />,
+      icon: <CiLogout size={20} />,
       label: <span className="dropdown__item" onClick={handleLogOut}>Đăng xuất</span>
     }
   ]
 
   return (
     <>
+      {contextHolder}
       <AuthModal />
       <div className="header">
         <div className="container">
@@ -65,12 +72,12 @@ function Header() {
           <div className="header__content">
             <ul className="header__menu">
               <li className="header__item">
-                <Dropdown 
-                menu={{ 
-                  items: itemsSubjects,
-                  className: "dropdown" 
-                }} 
-                arrow>
+                <Dropdown
+                  menu={{
+                    items: itemsSubjects,
+                    className: "dropdown"
+                  }}
+                  arrow>
                   <span>Luyện tập</span>
                 </Dropdown>
               </li>

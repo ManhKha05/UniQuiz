@@ -14,7 +14,7 @@ function Login() {
   const navigate = useNavigate();
 
   const onFinish = async (e) => {
-    const res = await post("login", e)
+    const res = await post("auth/login", e)
     if (!res.ok) {
       messageApi.error({
         style: {
@@ -26,7 +26,6 @@ function Login() {
       return;
     }
     const data = await res.json();
-    console.log(data)
     localStorage.setItem("token", data.token)
     localStorage.setItem("user", data.username)
 

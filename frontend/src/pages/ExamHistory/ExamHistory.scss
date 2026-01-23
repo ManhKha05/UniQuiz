@@ -1,0 +1,103 @@
+.examhistory {
+  padding: 60px 0;
+
+  &__title {
+    color: var(--color-two);
+    text-align: center;
+  }
+
+  &__desc {
+    text-align: center;
+    margin: 15px 0 30px;
+    font-size: 18px;
+  }
+
+  &__filter {
+    margin: 0 100px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding: 20px;
+    border-radius: 10px;
+
+    &-btn {
+      width: 100%;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+
+  &__input {
+    font-size: 16px;
+  }
+
+  .ant-form-item {
+    margin: 0;
+  }
+
+  &__list {
+    margin-top: 50px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    border-radius: 10px;
+  }
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 40px;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border: none;
+    }
+
+    &-title {
+      font-weight: 600;
+    }
+
+    &-info {
+      display: flex;
+      margin: 10px 0;
+      font-size: 15px;
+    }
+
+    &-desc {
+      margin-right: 20px;
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+
+      svg {
+        margin-right: 5px;
+        color: var(--color-one);
+        opacity: 0.8;
+      }
+    }
+
+    &-btn {
+      padding: 8px 15px;
+      background-color: var(--color-one);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+
+    &-right {
+      background-color: var(--color-two);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      border-radius: 15px;
+    }
+  }
+
+
+}

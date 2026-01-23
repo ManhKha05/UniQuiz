@@ -9,9 +9,18 @@ function SubjectList() {
 
   useEffect(() => {
     const fetchApi = async () => {
-      const res = await get("subjects");
-      const data = await res.json();
-      setSubjects(data);
+      try {
+        const res = await get("subjects");
+
+        if (!res.ok) {
+          throw new Error ("Error")
+        }
+        
+        const data = await res.json();
+        setSubjects(data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách môn học:", error);
+      }
     }
     fetchApi();
   }, [])
