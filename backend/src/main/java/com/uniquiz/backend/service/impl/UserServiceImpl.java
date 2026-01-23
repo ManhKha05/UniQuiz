@@ -12,19 +12,5 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserConverter userConverter;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder ;
-
-    @Override
-    public UserEntity register(RegisterRequest registerRequest) {
-        UserEntity userEntity = userConverter.convert(registerRequest);
-        userEntity.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        return userRepository.save(userEntity);
-    }
 }

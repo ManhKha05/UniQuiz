@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -36,4 +37,7 @@ public class UserEntity {
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "user",  fetch = FetchType.LAZY)
+    private List<ResetPasswordTokenEntity> resetPasswordTokenEntityList;
 }

@@ -16,12 +16,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-        UserEntity userEntity = userService.register(registerRequest);
-        return ResponseEntity.ok(Map.of("message", "Đăng ký thành công"));
-    }
-
     @GetMapping("/admin")
     public ResponseEntity<?> landingAdmin() {
         return ResponseEntity.ok("Vào trang admin thành công");
