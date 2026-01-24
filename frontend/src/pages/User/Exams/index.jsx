@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import "./Exams.scss";
 import { useEffect, useState } from "react";
-import { get } from "../../utils/request";
+import { get } from "../../../utils/request";
 
 function Exams() {
   const { id } = useParams();

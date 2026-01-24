@@ -1,18 +1,34 @@
-import { Button, Col, Form, Input, InputNumber, Row } from "antd";
+import { Button, Col, Form, Input, InputNumber, notification, Row } from "antd";
 import "./Contact.scss"
 import { FaMapLocationDot, FaPhoneVolume } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { useForm } from "antd/es/form/Form";
+import { post } from "../../../utils/request"
 
 function Contact() {
   const [form] = useForm();
+  const [notificationApi, contextHolder] = notification.useNotification();
 
-  const handleSubmit = (e) => {
-    console.log(e)
+  const handleSubmit = async (e) => {
+    try {
+      const res = await post("contact", e);
+
+      if (!res.ok) {
+        throw new Error("Lỗi hệ thống !!")
+      }
+      notificationApi.success({
+        title: 'Gửi liên hệ thành công',
+        description: 'Chúng tôi đã nhận được phản hồi của bạn và sẽ liên hệ lại sớm nhất.'
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
     form.resetFields();
   }
   return (
     <>
+      {contextHolder}
       <div className="contact">
         <div className="container">
           <Row gutter={[70, 50]}>
@@ -35,7 +51,7 @@ function Contact() {
                     <Col span={11}>
                       <Form.Item
                         label="Họ và tên"
-                        name="fullname"
+                        name="name"
                         rules={[{ required: true, message: 'Không được bỏ trống' }]}
                       >
                         <Input placeholder="Nhập họ và tên" />
@@ -58,7 +74,7 @@ function Contact() {
                         name="phone"
                         rules={[{ required: false, message: 'Không được bỏ trống' }]}
                       >
-                        <InputNumber style={{width: "100%"}} placeholder="Nhập số điện thoại" />
+                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Nhập số điện thoại" />
                       </Form.Item>
                     </Col>
 

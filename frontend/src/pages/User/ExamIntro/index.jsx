@@ -1,11 +1,16 @@
 import './ExamIntro.scss';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Row, Col } from "antd";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
 import { GoClock } from "react-icons/go";
 
 function ExamIntro() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const handleStart = () => {
+    navigate(`/exams/${id}/start`);
+  }
 
   return (
     <>
@@ -79,7 +84,7 @@ function ExamIntro() {
             </div>
           </div>
           <div className="examIntro__btn">
-            <button className="button">Bắt đầu làm</button>
+            <button onClick={handleStart} className="button">Bắt đầu làm</button>
           </div>
         </div>
       </div>

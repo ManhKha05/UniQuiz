@@ -7,13 +7,13 @@ import { MdQuiz } from "react-icons/md";
 import { IoIosPaper } from "react-icons/io";
 import { FaCheckDouble } from "react-icons/fa6";
 import { MdOutlineStarPurple500 } from "react-icons/md";
-import FeaturesImg from "../../assets/images/Features.png"
-import registerImg from "../../assets/images/Register.png"
-import Avt1 from "../../assets/images/Avt1.png"
-import Avt2 from "../../assets/images/Avt2.png"
-import Avt3 from "../../assets/images/Avt3.png"
+import FeaturesImg from "../../../assets/images/Features.png"
+import registerImg from "../../../assets/images/Register.png"
+import Avt1 from "../../../assets/images/Avt1.png"
+import Avt2 from "../../../assets/images/Avt2.png"
+import Avt3 from "../../../assets/images/Avt3.png"
 import { useDispatch } from "react-redux"
-import {registerModal} from "../../actions/authModal"
+import {registerModal} from "../../../actions/authModal"
 
 
 function Home() {

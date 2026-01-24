@@ -3,11 +3,17 @@ import { Button, Col, Form, Input, Row, Select } from "antd"
 import { FaCalendarDays, FaCheck } from "react-icons/fa6";
 import { GoClock } from "react-icons/go";
 import { HiOutlineNewspaper } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom"
 
 function ExamHistory() {
+  const navigate = useNavigate();
 
   const onFinish = () => {
 
+  }
+
+  const handleResult = () => {
+    navigate("/exam-result/1");
   }
 
   return (
@@ -70,7 +76,7 @@ function ExamHistory() {
             <div className="examhistory__item">
               <div className="examhistory__item-left">
                 <h2 className="examhistory__item-title">
-                  Đề thi Toán học lớp 12 - Đề số 1
+                  Đề ôn tập cuối chương 1
                 </h2>
                 <div className="examhistory__item-info">
                   <div className="examhistory__item-desc">
@@ -90,7 +96,7 @@ function ExamHistory() {
                     <span>35/40 câu</span>
                   </div>
                 </div>
-                <button className="examhistory__item-btn">
+                <button onClick={handleResult} className="examhistory__item-btn">
                   Xem chi tiết
                 </button>
               </div>
@@ -101,7 +107,7 @@ function ExamHistory() {
             <div className="examhistory__item">
               <div className="examhistory__item-left">
                 <h2 className="examhistory__item-title">
-                  Đề thi Toán học lớp 12 - Đề số 1
+                  Đề ôn tập cuối chương 1
                 </h2>
                 <div className="examhistory__item-info">
                   <div className="examhistory__item-desc">
@@ -121,7 +127,7 @@ function ExamHistory() {
                     <span>35/40 câu</span>
                   </div>
                 </div>
-                <button className="examhistory__item-btn">
+                <button onClick={handleResult} className="examhistory__item-btn">
                   Xem chi tiết
                 </button>
               </div>

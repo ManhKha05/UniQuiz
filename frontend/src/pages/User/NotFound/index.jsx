@@ -1,5 +1,5 @@
-import Button from "../../components/Button";
-import logo from "../../assets/images/UniQuiz.png"
+import Button from "../../../components/Button";
+import logo from "../../../assets/images/UniQuiz.png"
 import "./NotFound.scss"
 
 function NotFound() {

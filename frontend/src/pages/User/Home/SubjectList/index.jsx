@@ -2,7 +2,7 @@ import { Col, Row } from "antd"
 import "./SubjectList.scss";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom"
-import { get } from "../../../utils/request"
+import { get } from "../../../../utils/request"
 
 function SubjectList() {
   const [subjects, setSubjects] = useState([]);

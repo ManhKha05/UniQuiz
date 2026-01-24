@@ -1,7 +1,7 @@
 import { Col, Row } from "antd";
-import About1 from "../../assets/images/About1.png"
-import About2 from "../../assets/images/About2.png"
-import About3 from "../../assets/images/About3.png"
+import About1 from "../../../assets/images/About1.png"
+import About2 from "../../../assets/images/About2.png"
+import About3 from "../../../assets/images/About3.png" 
 import "./AboutUs.scss";
 
 function AboutUs() {

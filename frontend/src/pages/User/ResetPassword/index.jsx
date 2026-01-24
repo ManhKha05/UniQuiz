@@ -1,10 +1,10 @@
 import { Button, Form, Input, message, notification } from "antd";
 import { RiLockPasswordFill } from "react-icons/ri";
-import Logo from "../../assets/images/UniQuiz.png"
+import Logo from "../../../assets/images/UniQuiz.png"
 import { useParams } from "react-router-dom"
 import "./ResetPassword.scss";
 import { useEffect, useState } from "react";
-import { get, post } from "../../utils/request";
+import { get, post } from "../../../utils/request";
 
 function ResetPassword() {
   const { token } = useParams();

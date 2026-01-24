@@ -1,0 +1,96 @@
+.examdo {
+  padding: 60px 0;
+
+  &__header {
+    text-align: center;
+  }
+
+  &__title {
+    font-weight: 600;
+
+    &--sub {
+      font-weight: 400;
+      margin: 10px 0;
+    }
+  }
+
+  &__timer {
+    margin-top: 10px;
+    background-color: #fff5f5;
+    padding: 10px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 22px;
+    color: #e53e3e;
+    font-weight: 600;
+    border-radius: 20px;
+
+    svg {
+      margin-right: 10px;
+      font-size: 30px;
+    }
+  }
+
+  &__main {
+    margin: 50px 150px;
+  }
+
+  &__question {
+    margin-bottom: 40px;
+
+    &-text {
+      font-size: 24px;
+      font-weight: 450;
+      line-height: 1.5;
+    }
+
+    &-number {
+      margin-right: 10px;
+      font-weight: 700;
+    }
+  }
+
+  &__options {
+
+  }
+
+  &__option {
+    margin-top: 14px;
+    font-size: 19px;
+    display: flex;
+    border: 2px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #4a5568;
+    line-height: 1.5;
+
+    &:hover {
+      border-color: #667eea;
+      background: #f7fafc;
+    }
+
+    &-radio {
+      min-width: 20px;
+      height: 20px;
+      margin-right: 15px;
+      margin-top: 5px;
+    }
+  }
+
+  &__footer {
+    text-align: center;
+
+    .button {
+      background-color: var(--color-one);
+      color: #fff;
+      padding: 15px 40px;
+      font-size: 20px;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
