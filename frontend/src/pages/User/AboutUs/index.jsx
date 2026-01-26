@@ -10,7 +10,7 @@ function AboutUs() {
       <div className="about">
         <div className="container">
           <Row gutter={[50, 50]}>
-            <Col span={12}>
+            <Col xs={24} lg={12}>
               <div className="about__content">
                 <h2 className="about__title">
                   UniQuiz là gì?
@@ -21,18 +21,18 @@ function AboutUs() {
                 </p>
               </div>
             </Col>
-            <Col span={12}>
+            <Col xs={24} lg={12}>
               <div className="about__image">
                 <img src={About1} alt="" />
               </div>
             </Col>
 
-            <Col span={12}>
+            <Col xs={24} lg={12}>
               <div className="about__image">
                 <img src={About2} alt="" />
               </div>
             </Col>
-            <Col span={12}>
+            <Col xs={24} lg={12}>
               <div className="about__content">
                 <h2 className="about__title">
                   Sứ mệnh
@@ -48,7 +48,7 @@ function AboutUs() {
               </div>
             </Col>
 
-            <Col span={12}>
+            <Col xs={24} lg={12}>
               <div className="about__content">
                 <h2 className="about__title">
                   Cam kết của UniQuiz
@@ -63,7 +63,7 @@ function AboutUs() {
                 </div>
               </div>
             </Col>
-            <Col span={12}>
+            <Col xs={24} lg={12}>
               <div className="about__image">
                 <img src={About3} alt="" />
               </div>

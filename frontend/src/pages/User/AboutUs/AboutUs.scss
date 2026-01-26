@@ -7,6 +7,7 @@
     justify-content: center;
     height: 100%;
     // align-items: center;
+    padding: 10px;
   }
 
   &__title {
@@ -22,9 +23,14 @@
   }
 
   &__image {
+    text-align: center;
 
     img {
       height: 250px;
+
+      @media (max-width: 576px) {
+        height: 200px;
+      }
     }
   }
 
@@ -37,3 +43,5 @@
     }
   }
 }
+
+.ant-col {}

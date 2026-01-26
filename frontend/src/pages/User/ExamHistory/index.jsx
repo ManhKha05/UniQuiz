@@ -29,7 +29,7 @@ function ExamHistory() {
           <div className="examhistory__filter">
             <Form onFinish={onFinish}>
               <Row gutter={[30, 20]}>
-                <Col span={10}>
+                <Col xs={24} md={10}>
                   <Form.Item
                     name="exam"
                   >
@@ -37,7 +37,7 @@ function ExamHistory() {
                       placeholder="Tìm kiếm bài thi" />
                   </Form.Item>
                 </Col>
-                <Col span={10}>
+                <Col xs={24} md={10}>
                   <Form.Item
                     name="subject"
                   >
@@ -62,7 +62,7 @@ function ExamHistory() {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col xs={24} md={4}>
                   <Form.Item label={null}>
                     <Button type="primary" htmlType="submit" className="examhistory__filter-btn">
                       Lọc

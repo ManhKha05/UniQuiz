@@ -32,7 +32,7 @@ function Contact() {
       <div className="contact">
         <div className="container">
           <Row gutter={[70, 50]}>
-            <Col span={14}>
+            <Col xs={24} lg={14}>
               <div className="contact__form">
                 <h1 className="contact__title">
                   Liên hệ với chúng tôi
@@ -48,7 +48,7 @@ function Contact() {
                   form={form}
                 >
                   <Row>
-                    <Col span={11}>
+                    <Col xs={24} sm={11}>
                       <Form.Item
                         label="Họ và tên"
                         name="name"
@@ -58,7 +58,7 @@ function Contact() {
                       </Form.Item>
                     </Col>
 
-                    <Col span={11} offset={2}>
+                    <Col xs={24} sm={{span: 11, offset: 2}} >
                       <Form.Item
                         label="Email"
                         name="email"
@@ -68,7 +68,7 @@ function Contact() {
                       </Form.Item>
                     </Col>
 
-                    <Col span={11}>
+                    <Col xs={24} sm={11}>
                       <Form.Item
                         label="Số điện thoại"
                         name="phone"
@@ -78,7 +78,7 @@ function Contact() {
                       </Form.Item>
                     </Col>
 
-                    <Col span={11} offset={2}>
+                    <Col xs={24} sm={{span: 11, offset: 2}}>
                       <Form.Item
                         label="Tiêu đề"
                         name="title"
@@ -107,7 +107,7 @@ function Contact() {
                 </Form>
               </div>
             </Col>
-            <Col span={10}>
+            <Col xs={24} lg={10}>
               <div className="contact__info">
                 <h3 className="contact__info-title">
                   Công ty TNHH Phát triển Giáo dục Trực tuyến UniQuiz

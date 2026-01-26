@@ -40,7 +40,7 @@ function SubjectList() {
           <div className="subjects__list">
             <Row gutter={[20, 20]}>
               {subjects.map(item => (
-                <Col span={6} key={item.id}>
+                <Col xs={24} md={12} lg={6} key={item.id}>
                   <div className="subjects__item">
                     <img className="subjects__item-img" src={item.imageUrl} alt={item.name} />
                     <h3 className="subjects__item-title">{item.name}</h3>

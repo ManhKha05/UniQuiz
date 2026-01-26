@@ -13,7 +13,7 @@ import Avt1 from "../../../assets/images/Avt1.png"
 import Avt2 from "../../../assets/images/Avt2.png"
 import Avt3 from "../../../assets/images/Avt3.png"
 import { useDispatch } from "react-redux"
-import {registerModal} from "../../../actions/authModal"
+import { registerModal } from "../../../actions/authModal"
 
 
 function Home() {
@@ -34,8 +34,8 @@ function Home() {
             </p>
           </div>
           <div className="steps__list">
-            <Row gutter={[80, 20]}>
-              <Col span={8}>
+            <Row gutter={[40, 20]}>
+              <Col xs={24} md={8}>
                 <div className="steps__item">
                   <h2 className="steps__item-number">
                     Bước 1
@@ -48,7 +48,7 @@ function Home() {
                   </p>
                 </div>
               </Col>
-              <Col span={8}>
+              <Col xs={24} md={8}>
                 <div className="steps__item">
                   <h2 className="steps__item-number">
                     Bước 2
@@ -61,7 +61,7 @@ function Home() {
                   </p>
                 </div>
               </Col>
-              <Col span={8}>
+              <Col xs={24} md={8}>
                 <div className="steps__item">
                   <h2 className="steps__item-number">
                     Bước 3
@@ -82,15 +82,15 @@ function Home() {
       <div className="features">
         <div className="container">
           <Row>
-            <Col span={12}>
+            <Col xs={24} lg={12}>
               <div className="features__image">
                 <img src={FeaturesImg} alt="" />
               </div>
             </Col>
-            <Col span={12}>
+            <Col xs={24} lg={12}>
               <div className="features__list">
-                <Row gutter={[80, 60]}>
-                  <Col span={12}>
+                <Row gutter={[60, 30]}>
+                  <Col xs={24} sm={12}>
                     <div className="features__item">
                       <div className="features__item-icon">
                         <FaQuestion />
@@ -103,7 +103,7 @@ function Home() {
                       </p>
                     </div>
                   </Col>
-                  <Col span={12}>
+                  <Col xs={24} sm={12}>
                     <div className="features__item">
                       <div className="features__item-icon">
                         <FaFileInvoice />
@@ -116,7 +116,7 @@ function Home() {
                       </p>
                     </div>
                   </Col>
-                  <Col span={12}>
+                  <Col xs={24} sm={12}>
                     <div className="features__item">
                       <div className="features__item-icon">
                         <FaChartBar />
@@ -129,7 +129,7 @@ function Home() {
                       </p>
                     </div>
                   </Col>
-                  <Col span={12}>
+                  <Col xs={24} sm={12}>
                     <div className="features__item">
                       <div className="features__item-icon">
                         <PiDevicesFill />
@@ -155,8 +155,8 @@ function Home() {
             Nền tảng UniQuiz có gì ?
           </h2>
           <div className="stats__list">
-            <Row gutter={[60, 60]}>
-              <Col span={8}>
+            <Row gutter={[60, 30]}>
+              <Col xs={24} sm={12} md={8}>
                 <div className="stats__item">
                   <div className="stats__icon">
                     <PiStudentFill />
@@ -171,7 +171,7 @@ function Home() {
                   </div>
                 </div>
               </Col>
-              <Col span={8}>
+              <Col xs={24} sm={12} md={8}>
                 <div className="stats__item">
                   <div className="stats__icon">
                     <MdQuiz />
@@ -186,7 +186,7 @@ function Home() {
                   </div>
                 </div>
               </Col>
-              <Col span={8}>
+              <Col xs={24} sm={12} md={8}>
                 <div className="stats__item">
                   <div className="stats__icon">
                     <IoIosPaper />
@@ -209,7 +209,10 @@ function Home() {
       <div className="registerbox">
         <div className="container">
           <Row>
-            <Col span={12}>
+            <Col xs={24} lg={12} className="registerbox__image">
+              <img src={registerImg} alt="" />
+            </Col>
+            <Col xs={24} lg={12}>
               <div className="registerbox__content">
                 <div className="registerbox__title">
                   <div className="registerbox__title-sub">
@@ -243,9 +246,6 @@ function Home() {
                 <button onClick={() => dispatch(registerModal())} className="button">Đăng ký ngay</button>
               </div>
             </Col>
-            <Col span={12} className="registerbox__image">
-              <img src={registerImg} alt="" />
-            </Col>
           </Row>
         </div>
       </div>
@@ -256,8 +256,8 @@ function Home() {
             Cảm nhận của sinh viên
           </h2>
           <div className="testimonials__list">
-            <Row gutter={[30, 20]} style={{alignItems: "center"}}>
-              <Col span={8}>
+            <Row gutter={[30, 20]} style={{ alignItems: "center" }}>
+              <Col xs={24} md={8}>
                 <div className="testimonials__item">
                   <div className="testimonials__avt">
                     <img src={Avt1} alt="" />
@@ -277,7 +277,7 @@ function Home() {
                   </p>
                 </div>
               </Col>
-              <Col span={8}>
+              <Col xs={24} md={8}>
                 <div className="testimonials__item main">
                   <div className="testimonials__avt">
                     <img src={Avt2} alt="" />
@@ -297,7 +297,7 @@ function Home() {
                   </p>
                 </div>
               </Col>
-              <Col span={8}>
+              <Col xs={24} md={8}>
                 <div className="testimonials__item">
                   <div className="testimonials__avt">
                     <img src={Avt3} alt="" />

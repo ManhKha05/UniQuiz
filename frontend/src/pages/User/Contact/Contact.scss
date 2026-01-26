@@ -1,6 +1,10 @@
 .contact {
   padding: 100px 0;
 
+    @media (max-width: 576px) {
+      padding: 30px 10px;
+    }
+
   &__title {
     color: var(--color-two);
     font-size: 32px;

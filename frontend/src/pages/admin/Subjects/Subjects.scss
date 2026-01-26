@@ -1,0 +1,44 @@
+.subjectsAd {
+
+  &__title {
+    text-align: center;
+  }
+
+  &__action {
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    margin: 30px 0;
+  }
+
+  &__search {
+    display: flex;
+    align-items: center;
+    position: relative;
+    
+    svg {
+      position: absolute;
+      left: 10px;
+      font-size: 20px;
+    }
+
+    input {
+      height: 100%;
+      padding: 0 10px 0 35px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      outline: none;
+
+      &:focus {
+        border: 1px solid var(--color-one);
+      }
+    }
+  }
+
+  &__create {
+    padding: 0 20px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+}

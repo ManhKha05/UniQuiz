@@ -7,6 +7,10 @@
 
   &__subject {
     color: var(--color-two);
+
+    @media (max-width: 576px) {
+      font-size: 26px;
+    }
   }
 
   &__exam {

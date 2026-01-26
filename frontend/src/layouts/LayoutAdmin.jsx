@@ -1,11 +1,11 @@
 import { Layout, Menu } from "antd";
-import { Content, Footer, Header } from "antd/es/layout/layout";
+import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import "./LayoutAdmin.scss";
 import { Link, Outlet } from "react-router-dom";
 import logo from "../assets/images/UniQuiz-r.png"
 import { FaUsersCog, FaFileSignature  } from "react-icons/fa";
-import { MdOutlineSubject, MdContacts  } from "react-icons/md";
+import { MdContacts  } from "react-icons/md";
 import { PiExam } from "react-icons/pi";
 import { FaList } from "react-icons/fa6";
 
@@ -14,34 +14,31 @@ function LayoutAdmin() {
   const items = [
     {
       key: 'users',
-      label: 'Người dùng',
+      label: <Link to='/admin'>Người dùng</Link>,
       icon: <FaUsersCog />
     },
     {
       key: 'subjects',
-      label: 'Môn học',
+      label: <Link to='/admin/subjects'>Môn học</Link>,
       icon: <FaList />
     },
     {
       key: 'exams',
-      label: 'Đề thi',
+      label: <Link to='/admin/exams'>Đề thi</Link>,
       icon: <FaFileSignature />
     },
     {
       key: 'results',
-      label: 'Kết quả',
+      label: <Link to='/admin/results'>Kết quả</Link>,
       icon: <PiExam />
     },
     {
       key: 'contact',
-      label: 'Liên hệ & góp ý',
+      label: <Link to='/admin/contacts'>Liên hệ & góp ý</Link>,
       icon: <MdContacts />
     },
   ]
 
-  const handleBackToHome = () => {
-
-  }
 
   return (
     <>
@@ -56,10 +53,10 @@ function LayoutAdmin() {
           </div>
         </div>
         <Layout>
-          <Sider width="250px" theme="light">
+          <Sider width="250px" theme="light" breakpoint="lg">
             <Menu
               // onClick={onClick}
-              defaultSelectedKeys={['1']}
+              defaultSelectedKeys={['users']}
               defaultOpenKeys={['sub1']}
               mode="inline"
               items={items}

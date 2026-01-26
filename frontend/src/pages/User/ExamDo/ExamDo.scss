@@ -33,6 +33,15 @@
 
   &__main {
     margin: 50px 150px;
+
+    @media (max-width: 992px) {
+      margin: 0;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 576px) {
+      margin: 10px;
+    }
   }
 
   &__question {

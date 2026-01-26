@@ -121,7 +121,6 @@ function Users() {
           dataSource={dataSource}
           columns={columns}
           rowKey="id"
-          className="users__table"
         />
       </div>
     </>

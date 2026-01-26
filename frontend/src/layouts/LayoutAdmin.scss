@@ -7,6 +7,10 @@
     background-color: #fff;
     border-bottom: 2px solid #ddd;
     padding: 5px 0;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+
 
     &__logo {
       display: flex;
@@ -14,6 +18,10 @@
       align-items: center;
       width: 250px;
       border-right: 2px solid #ddd;
+
+      @media (max-width: 992px) {
+        border: none;
+      }
 
       img {
         height: 30px;
@@ -33,12 +41,13 @@
   }
 
   .menu {
-    width: 250px;
     font-size: 16px;
     padding: 10px 0;
     font-weight: 500;
     height: 100vh;
     border-right: 2px solid #ddd !important;
+    // position: fixed;
+    // top: 90px;
 
     svg {
       width: 20px;
