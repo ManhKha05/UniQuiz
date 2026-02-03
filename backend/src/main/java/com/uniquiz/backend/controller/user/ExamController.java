@@ -1,8 +1,10 @@
 package com.uniquiz.backend.controller;
 
-import com.uniquiz.backend.dto.exam.ExamDTO;
+import com.uniquiz.backend.dto.exam.DashboardExamDTO;
+import com.uniquiz.backend.dto.exam.ExamUserDTO;
 import com.uniquiz.backend.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +20,9 @@ public class ExamController {
     private ExamService examService;
 
     @GetMapping("subjects/{subjectId}/exams")
-    public List<ExamDTO> getExamsBySubject(@PathVariable("subjectId") int subjectId) {
+    public List<ExamUserDTO> getExamsBySubject(@PathVariable("subjectId") int subjectId) {
         return examService.getExamsBySubjectId(subjectId);
     }
+
+
 }

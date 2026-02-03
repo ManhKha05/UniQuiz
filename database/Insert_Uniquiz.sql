@@ -30,10 +30,20 @@ CREATE TABLE exam (
 
 CREATE TABLE question (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  exam_id INT NOT NULL,
+  subject_id INT NOT NULL,
   content TEXT NOT NULL,
   question_type ENUM('SINGLE', 'MULTIPLE') DEFAULT 'SINGLE',
-  FOREIGN KEY (exam_id) REFERENCES exam(id)
+  level ENUM('EASY','MEDIUM','HARD') DEFAULT 'MEDIUM',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (subject_id) REFERENCES subject(id)
+);
+
+CREATE TABLE exam_question (
+  exam_id INT NOT NULL,
+  question_id INT NOT NULL,
+  PRIMARY KEY (exam_id, question_id),
+  FOREIGN KEY (exam_id) REFERENCES exam(id) ON DELETE CASCADE,
+  FOREIGN KEY (question_id) REFERENCES question(id)
 );
 
 CREATE TABLE answer (
@@ -56,11 +66,11 @@ CREATE TABLE result (
 );
 
 CREATE TABLE user_answer (
+  id INT AUTO_INCREMENT PRIMARY KEY, 
   result_id INT NOT NULL,
   question_id INT NOT NULL,
   answer_id INT NOT NULL,
-  PRIMARY KEY (result_id, question_id, answer_id),
-  FOREIGN KEY (result_id) REFERENCES result(id) ON DELETE CASCADE,
+  FOREIGN KEY (result_id) REFERENCES result(id),
   FOREIGN KEY (question_id) REFERENCES question(id),
   FOREIGN KEY (answer_id) REFERENCES answer(id)
 );
@@ -75,3 +85,13 @@ CREATE TABLE contact_feedback (
     status ENUM('PENDING', 'RESOLVED') DEFAULT 'PENDING',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE reset_password_token (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    token_hash VARCHAR(255) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used_at DATETIME NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES USER (id)
+)

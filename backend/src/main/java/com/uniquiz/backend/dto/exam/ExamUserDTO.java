@@ -16,5 +16,5 @@ public class ExamDTO {
     private String title;
     private Integer duration;
     private String status;
-    private LocalDate createdDate;
+    private LocalDate createdAt;
 }
