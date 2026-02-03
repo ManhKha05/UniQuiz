@@ -1,36 +1,71 @@
 import './ExamIntro.scss';
 import { useNavigate, useParams } from "react-router-dom";
-import { Row, Col } from "antd";
+import { Row, Col, message } from "antd";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
 import { GoClock } from "react-icons/go";
+import { useEffect, useState } from 'react';
+import { get } from "../../../utils/request";
 
 function ExamIntro() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [exam, setExam] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const res = await get(`exams/${id}`);
+
+        if (!res.ok) {
+          throw new Error()
+        }
+        const data = await res.json();
+        setExam(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchApi();
+  }, [])
+
 
   const handleStart = () => {
-    navigate(`/exams/${id}/start`);
+    const fetchApi = async () => {
+      try {
+        const res = await get(`exams/request`);
+        
+        if (!res.ok) {
+          throw new Error()
+        }
+        navigate(`/exams/${id}/start`);
+      } catch (error) {
+        messageApi.warning("Bạn cần đăng nhập để làm bài thi")
+      }
+    }
+    fetchApi();
   }
 
   return (
     <>
+      {contextHolder}
       <div className="examIntro">
         <div className="container">
           <div className="examIntro__header">
             <h1 className="examIntro__subject">
-              Trắc nghiệm môn Lịch sử Đảng Cộng sản Việt Nam
+              Trắc nghiệm môn {exam.subjectName}
             </h1>
             <h2 className="examIntro__exam">
-              Luyện tập chương 1
+              {exam.title}
             </h2>
             <div className="examIntro__info">
               <div className="examIntro__info-item">
                 <BsFillQuestionCircleFill />
-                <span>40 câu</span>
+                <span>{exam.totalQuestions} câu</span>
               </div>
               <div className="examIntro__info-item">
                 <GoClock />
-                <span>50 phút</span>
+                <span>{exam.duration} phút</span>
               </div>
             </div>
           </div>

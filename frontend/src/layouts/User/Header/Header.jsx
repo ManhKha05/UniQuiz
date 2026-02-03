@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
-import logo from "../../assets/images/UniQuiz.png"
+import logo from "../../../assets/images/UniQuiz.png"
 import "./Header.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { loginModal } from "../../actions/authModal";
-import AuthModal from "../../components/AuthModal";
+import { loginModal } from "../../../actions/authModal";
+import AuthModal from "../../../components/AuthModal";
 import { HiMiniUserCircle } from "react-icons/hi2";
 import { CiLogout } from "react-icons/ci";
 import { PiStudentFill } from "react-icons/pi";
 import { Dropdown, message } from "antd";
-import { logout } from "../../actions/auth";
+import { logout } from "../../../actions/auth";
 import { useEffect, useState } from "react";
-import { get } from "../../utils/request";
+import { get } from "../../../utils/request";
 
 function Header() {
   const isLogin = useSelector(state => state.authReducer);
@@ -31,9 +31,11 @@ function Header() {
 
   useEffect(() => {
     const fetchApi = async () => {
-      const res = await get("subjects");
+      const res = await get("subjects", {
+        status: 'ACTIVE'
+      });
       const data = await res.json()
-      const items = data.map(item => (
+      const items = data.content.map(item => (
         {
           key: item.id,
           label: <Link className="dropdown__item" to={`subjects/${item.id}/exams`}>{item.name}</Link>

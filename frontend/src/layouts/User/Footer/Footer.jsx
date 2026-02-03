@@ -3,7 +3,7 @@ import { FaYoutube, FaFacebookF } from "react-icons/fa6";
 import { FaTiktok } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaBuilding } from "react-icons/fa";
-import logoR from "../../assets/images/UniQuiz-r.png"
+import logoR from "../../../assets/images/UniQuiz-r.png"
 import "./Footer.scss";
 
 function Footer() {

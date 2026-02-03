@@ -118,12 +118,16 @@
     margin-right: 10px;
     font-weight: 600;
 
-    &-true {
+    &-correct {
       background-color: #48bb78;
     }
 
-    &-false {
+    &-wrong {
       background: #f56565;
+    }
+
+    &-empty {
+      background: #d3aaaa;
     }
   }
 

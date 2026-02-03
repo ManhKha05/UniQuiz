@@ -1,51 +1,92 @@
-import { Modal, Popconfirm, Switch, Table, Tag } from "antd";
+import { Modal, notification, Popconfirm, Switch, Table, Tag } from "antd";
 import "./ContactFeedback.scss"
 import { BsEnvelopeAtFill } from "react-icons/bs";
 import { FaCheckSquare, FaCalendarDay, FaHourglassEnd } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
-import { useState } from "react";
-import { CheckCircleOutlined } from '@ant-design/icons';
+import { useEffect, useState } from "react";
+import { CheckCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { get, patch } from "../../../utils/request";
+import { formatDateTime } from "../../../utils/date";
 
 function ContactFeedback() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filter, setFilter] = useState({ status: "ALL" })
-  const showModal = (id) => {
-    console.log("Xem chi tiết liên hệ: " + id);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [total, setTotal] = useState(0);
+  const [status, setStatus] = useState(null);
+  const [keyword, setKeyword] = useState('');
+  const [contactsList, setContactsList] = useState([]);
+  const [dashboard, setDashboard] = useState([]);
+  const [selectedContact, setSelectedContact] = useState([]);
+  const [notificationApi, contextHolder] = notification.useNotification();
+  const [reload, setReload] = useState(false);
+
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const [contactsListRes, dashboardRes] = await Promise.all([
+          get('admin/contacts', { 
+            page: page - 1,
+            pageSize,
+            keyword, 
+            status }),
+          get('admin/contacts/dashboard')
+        ])
+
+        const contactsListData = await contactsListRes.json();
+        const dashboardData = await dashboardRes.json();
+
+        setContactsList(contactsListData.content.reverse());
+        setDashboard(dashboardData);
+        setTotal(contactsListData.totalElements)
+      } catch (error) {
+        console.log("Lỗi lấy các Liên hệ & góp ý: ", error);
+      }
+    }
+    fetchApi();
+  }, [reload, page, pageSize, keyword, status])
+
+  const showModal = (record) => {
+    setSelectedContact(record);
     setIsModalOpen(true);
   };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
-  const handleFilter = (status) => {
-    setFilter({
-      ...filter,
-      status: status
-    })
+  const handleSearch = (e) => {
+    if (e.code === 'Enter') {
+      setKeyword(e.target.value);
+    }
   }
 
-  const dataSource = [
-    {
-      id: '1',
-      name: 'Nguyễn Mạnh Kha',
-      email: 'nguyenmanhkha3225@gmail.com',
-      title: 'Cải thiện giao diện',
-      createdAt: '14:00 12-01-2026',
-      status: 'PENDING'
-    },
-    {
-      id: '2',
-      name: 'Trần Văn Nam',
-      email: 'tranvannam@gmail.com',
-      title: 'Báo lỗi hệ thống',
-      createdAt: '15:40 12-01-2026',
-      status: 'SOLVED'
-    },
-  ];
+  const handleChangeStatus = (record) => {
+    const fetchApi = async () => {
+      try {
+        const res = await patch(`admin/contacts/${record.id}/status`, {
+          status: record.status === 'PENDING' ? 'RESOLVED' : 'PENDING'
+        })
+        if (!res.ok) {
+          throw new Error()
+        }
+        const data = await res.json();
+        notificationApi.success({
+          title: 'Cập nhật trạng thái',
+          description: data.status === 'RESOLVED'
+            ? 'Yêu cầu đã được đánh dấu là đã xử lý.'
+            : 'Yêu cầu đã được chuyển về trạng thái đang xử lý.'
+        })
+        setReload(!reload);
+      } catch (error) {
+        console.log("Lỗi cập nhật trạng thái: ", error);
+      }
+    }
+    fetchApi();
+  }
+
 
   const columns = [
     {
@@ -72,27 +113,31 @@ function ContactFeedback() {
       title: 'Trạng thái',
       key: 'status',
       minWidth: '140px',
-      render: (_, { status }) => {
-        let check = status === 'PENDING' ? false : true;
+      render: (_, record) => {
+        let check = record.status === 'PENDING' ? false : true;
         return (
           <Switch
             checkedChildren="Đã xử lý"
             unCheckedChildren="Đang xử lý"
-            defaultChecked={check} />
+            defaultChecked={check}
+            onChange={() => handleChangeStatus(record)}
+          />
         )
       }
     },
     {
       title: 'Thời gian gửi',
-      dataIndex: 'createdAt',
-      key: 'createdAt'
+      key: 'createdAt',
+      render: (_, { createdAt }) => (
+        formatDateTime(createdAt)
+      )
     },
     {
       title: 'Xem',
       key: 'action',
       render: (_, record) => (
         <button
-          onClick={() => showModal(record.id)}
+          onClick={() => showModal(record)}
           fontSize="25px"
           cursor="pointer"
           style={{ fontSize: "18px", backgroundColor: "#fff", border: "none", cursor: "pointer" }}
@@ -105,6 +150,7 @@ function ContactFeedback() {
 
   return (
     <>
+      {contextHolder}
       <div className="feedback">
         <h1 className="feedback__title">
           Quản lí Liên hệ & Góp ý
@@ -113,46 +159,58 @@ function ContactFeedback() {
           <div className="feedback__item">
             <BsEnvelopeAtFill />
             <span>TỔNG SỐ</span>
-            <h3>15</h3>
+            <h3>{dashboard.total}</h3>
           </div>
           <div className="feedback__item">
             <FaHourglassEnd />
             <span>ĐANG XỬ LÝ</span>
-            <h3>15</h3>
+            <h3>{dashboard.pending}</h3>
           </div>
           <div className="feedback__item">
             <FaCheckSquare />
             <span>ĐÃ XỬ LÝ</span>
-            <h3>15</h3>
+            <h3>{dashboard.resolved}</h3>
           </div>
           <div className="feedback__item">
             <FaCalendarDay />
             <span>HÔM NAY</span>
-            <h3>15</h3>
+            <h3>{dashboard.today}</h3>
           </div>
         </div>
         <div className="filter">
           <div className="filter__left">
             <IoIosSearch className="icon" />
-            <input type="text" placeholder="Tìm theo tên, email hoặc tiêu đề" />
+            <input type="text" placeholder="Tìm theo tên, email hoặc tiêu đề" onKeyDown={handleSearch} />
           </div>
           <div className="filter__right">
-            <button className={"filter__btn " + (filter.status === 'ALL' ? "filter__btn--active" : "")} onClick={() => handleFilter("ALL")}>
+            <button className={"filter__btn " + (status === null ? "filter__btn--active" : "")} onClick={() => setStatus(null)}>
               Tất cả
             </button>
-            <button className={"filter__btn " + (filter.status === 'PENDING' ? "filter__btn--active" : "")} onClick={() => handleFilter("PENDING")} >
+            <button className={"filter__btn " + (status === 'PENDING' ? "filter__btn--active" : "")} onClick={() => setStatus("PENDING")} >
               Đang xử lý
             </button>
-            <button className={"filter__btn " + (filter.status === 'SOLVED' ? "filter__btn--active" : "")} onClick={() => handleFilter("SOLVED")} >
+            <button className={"filter__btn " + (status === 'RESOLVED' ? "filter__btn--active" : "")} onClick={() => setStatus("RESOLVED")} >
               Đã xử lý
             </button>
           </div>
         </div >
         <Table
-          dataSource={dataSource}
+          dataSource={contactsList}
           columns={columns}
           rowKey="id"
           className="table"
+          pagination={{
+            current: page,
+            pageSize,
+            total,
+            showSizeChanger: true,
+            pageSizeOptions: [5, 10, 20],
+            showTotal: (total) => `Tổng ${total} liên hệ`
+          }}
+          onChange={(pagination) => {
+            setPage(pagination.current);
+            setPageSize(pagination.pageSize);
+          }}
         />
         <Modal
           title="Chi tiết liên hệ"
@@ -163,20 +221,20 @@ function ContactFeedback() {
           style={{ top: 20 }}
         >
           <div className="modal">
-            <div className="modal__item">
+            {/* <div className="modal__item">
               <p className="modal__item-label">
                 ID
               </p>
               <div className="modal__item-content">
-                1
+                {selectedContact.id}
               </div>
-            </div>
+            </div> */}
             <div className="modal__item">
               <p className="modal__item-label">
                 Tên người gửi
               </p>
               <div className="modal__item-content">
-                Nguyễn Mạnh Kha
+                {selectedContact.name}
               </div>
             </div>
             <div className="modal__item">
@@ -184,7 +242,15 @@ function ContactFeedback() {
                 Email
               </p>
               <div className="modal__item-content">
-                nguyenmanhkha3225@gmail.com
+                {selectedContact.email}
+              </div>
+            </div>
+            <div className="modal__item">
+              <p className="modal__item-label">
+                Số điện thoại
+              </p>
+              <div className="modal__item-content">
+                {selectedContact.phone ? selectedContact.phone : '---'}
               </div>
             </div>
             <div className="modal__item">
@@ -192,7 +258,7 @@ function ContactFeedback() {
                 Tiêu đề
               </p>
               <div className="modal__item-content">
-                Cải thiện giao diện
+                {selectedContact.title}
               </div>
             </div>
             <div className="modal__item">
@@ -200,7 +266,7 @@ function ContactFeedback() {
                 Nội dung
               </p>
               <div className="modal__item-content">
-                Tôi muốn góp ý về việc cải thiện giao diện người dùng. Có thể thêm chế độ dark mode và tối ưu hóa trải nghiệm trên mobile không?
+                {selectedContact.content}
               </div>
             </div>
             <div className="modal__item">
@@ -208,13 +274,23 @@ function ContactFeedback() {
                 Trạng thái
               </p>
               <div className="modal__item-content">
-                <Tag
-                  icon={<CheckCircleOutlined />}
-                  color={"success"}
-                  style={{ fontSize: "16px" }}
-                >
-                  Đã xử lý
-                </Tag>
+                {selectedContact.status === 'RESOLVED' ? (
+                  <Tag
+                    icon={<CheckCircleOutlined />}
+                    color="success"
+                    style={{ fontSize: "16px" }}
+                  >
+                    Đã xử lý
+                  </Tag>
+                ) : (
+                  <Tag
+                    icon={<SyncOutlined spin />}
+                    color='processing'
+                    style={{ fontSize: "16px" }}
+                  >
+                    Đang xử lý
+                  </Tag>
+                )}
               </div>
             </div>
             <div className="modal__item">
@@ -222,7 +298,7 @@ function ContactFeedback() {
                 Thời gian gửi
               </p>
               <div className="modal__item-content">
-                14:40 15-01-2026
+                {formatDateTime(selectedContact.createdAt)}
               </div>
             </div>
           </div>

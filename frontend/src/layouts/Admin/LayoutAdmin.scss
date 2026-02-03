@@ -44,10 +44,8 @@
     font-size: 16px;
     padding: 10px 0;
     font-weight: 500;
-    height: 100vh;
-    border-right: 2px solid #ddd !important;
-    // position: fixed;
-    // top: 90px;
+    position: sticky;
+    // top: 30px;
 
     svg {
       width: 20px;
@@ -58,5 +56,8 @@
   .content {
     padding: 20px;
     background-color: #fff;
+    border-left: 2px solid #ddd !important;
+    min-height: calc(100vh - 70px);
   }
+
 }

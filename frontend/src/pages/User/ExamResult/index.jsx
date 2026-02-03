@@ -1,11 +1,30 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./ExamResult.scss";
+import { useEffect, useState } from "react";
+import { get } from "../../../utils/request";
+import { formatDateTime } from "../../../utils/date"
 
 function ExamResult() {
   const navigate = useNavigate();
+  const { resultId } = useParams();
+  const [result, setResult] = useState({});
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const res = await get(`results/${resultId}`)
+        const data = await res.json();
+        console.log(data);
+        setResult(data);
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchApi();
+  }, [])
 
   const handleRetry = () => {
-    navigate('/exams/1');
+    navigate(`/exams/${result.examId}`);
   }
 
   return (
@@ -17,37 +36,93 @@ function ExamResult() {
               Kết quả bài làm
             </h1>
             <p className="result__title-sub">
-              Lịch sử Đảng Cộng sản Việt Nam - Chương 1
+              {result.title}
             </p>
           </div>
           <div className="result__main">
             <h1 className="result__grade">
-              9.5
+              {result.grade?.toFixed(2)}
               <p>Điểm</p>
             </h1>
             <div className="result__info">
               <div className="result__info-item">
-                20
+                {result.totalQuestions}
                 <p>TỔNG SỐ CÂU</p>
               </div>
               <div className="result__info-item">
-                18
+                {result.totalCorrect}
                 <p>CÂU ĐÚNG</p>
               </div>
               <div className="result__info-item">
-                2
+                {result.totalWrong}
                 <p>CÂU SAI</p>
               </div>
             </div>
             <div className="result__time">
-              Thời gian hoàn thành: 35 phút 42 giây | Nộp bài lúc: 14:35 - 23/01/2026
+              Thời gian hoàn thành: {Math.floor(result.duration / 60)} phút {result.duration % 60}  giây | Nộp bài lúc: {formatDateTime(result.submittedDate)}
             </div>
           </div>
           <div className="result__detail">
             <h2 className="result__detail-title">
               Chi tiết bài làm
             </h2>
-            <div className="question">
+
+            {(result.questions || []).map((question, index) => (
+              <div className="question" key={index}>
+                <div className="question__header">
+                  {question.status === 'Correct' ? (
+                    <span className="question__icon question__icon-correct" >
+                      ✓
+                    </span>
+                  ) : question.status === 'Wrong' ? (
+                    <span className="question__icon question__icon-wrong" >
+                      ✗
+                    </span>
+                  ) : (
+                    <span className="question__icon question__icon-empty" >
+                      ?
+                    </span>
+                  )}
+                  <p className="question__content">
+                    Câu {index + 1}: {question.content}
+                  </p>
+                </div>
+                <div className="answer__list">
+                  {(question.answers || []).map((answer, index) => (
+                    <div
+                      className={"answer__item " +
+                        (answer.id === question.selectedAnswerId ? (
+                          answer.id === question.correctAnswerId
+                            ? "answer__item--selected answer__item--correct"
+                            : "answer__item--selected"
+                        ) : (
+                          answer.id === question.correctAnswerId
+                            ? "answer__item--correct"
+                            : ""
+                        ))
+                      }
+                      key={index}
+                    >
+                      <span className="answer__label">{String.fromCharCode(65 + index)} </span>
+                      <span className="answer__content">{answer.content}</span>
+                      <span className="answer__badge">
+                        {answer.id === question.selectedAnswerId ? (
+                          answer.id === question.correctAnswerId
+                            ? "✓ Đáp án của bạn - Chính xác"
+                            : "✗ Đáp án của bạn - Sai"
+                        ) : (
+                          answer.id === question.correctAnswerId
+                            ? "✓ Đáp án đúng"
+                            : ""
+                        )}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {/* <div className="question">
               <div className="question__header">
                 <span className="question__icon question__icon-true" >
                   ✓
@@ -109,7 +184,7 @@ function ExamResult() {
                   <span className="answer__badge"></span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="result__footer">
             <button onClick={handleRetry} className="result__button">Làm lại bài thi </button>

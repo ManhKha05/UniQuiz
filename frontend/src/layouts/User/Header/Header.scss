@@ -33,6 +33,7 @@
 
   &__menu {
     display: flex;
+
   }
 
   &__item {
@@ -47,6 +48,11 @@
 
   & .button {
     font-size: 16px;
+
+    @media (max-width: 576px) {
+      font-size: 12px;
+      padding: 5px;
+    }
   }
 
   &__user {
@@ -100,6 +106,26 @@
 
     &__item {
       margin-right: 20px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .user-layout .header {
+
+    &__logo {
+      
+      img {
+        height: 30px;
+      }
+    }
+
+    &__menu {
+      font-size: 14px;
+    }
+
+    &__item {
+      margin-right: 8px;
     }
   }
 }

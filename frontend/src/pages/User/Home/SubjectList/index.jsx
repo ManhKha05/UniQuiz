@@ -10,14 +10,16 @@ function SubjectList() {
   useEffect(() => {
     const fetchApi = async () => {
       try {
-        const res = await get("subjects");
+        const res = await get("subjects", {
+          status: 'ACTIVE'
+        });
 
         if (!res.ok) {
           throw new Error ("Error")
         }
         
         const data = await res.json();
-        setSubjects(data);
+        setSubjects(data.content);
       } catch (error) {
         console.error("Lỗi khi lấy danh sách môn học:", error);
       }

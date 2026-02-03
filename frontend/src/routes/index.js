@@ -1,6 +1,6 @@
-import LayoutAdmin from "../layouts/LayoutAdmin";
-import LayoutDefault from "../layouts/LayoutDefault";
-import Subjects from "../pages/admin/Subjects/indes";
+import LayoutAdmin from "../layouts/Admin/LayoutAdmin";
+import LayoutDefault from "../layouts/User/LayoutDefault";
+import Subjects from "../pages/admin/Subjects";
 import Users from "../pages/admin/Users";
 import AboutUs from "../pages/User/AboutUs";
 import Contact from "../pages/User/Contact";
@@ -15,6 +15,8 @@ import NotFound from "../pages/User/NotFound";
 import ResetPassword from "../pages/User/ResetPassword";
 import Results from "../pages/admin/Results";
 import ContactFeedback from "../pages/admin/ContactFeedback";
+import Dashboard from "../pages/admin/Dashboard";
+import Questions from "../pages/admin/Questions";
 
 export const routes = [
   {
@@ -38,7 +40,7 @@ export const routes = [
         element: <ExamDo/>
       },
       {
-        path: 'exam-result/:attempId',
+        path: 'exam-result/:resultId',
         element: <ExamResult/>
       },
       {
@@ -65,11 +67,19 @@ export const routes = [
     children: [
       {
         index: true,
-        element: <Users/>
+        element: <Dashboard />
+      },
+      {
+        path: 'contacts',
+        element: <ContactFeedback/>
       },
       {
         path: "subjects",
         element: <Subjects/>
+      },
+      {
+        path: "questions",
+        element: <Questions/>
       },
       {
         path: "exams",
@@ -80,8 +90,8 @@ export const routes = [
         element: <Results/>
       },
       {
-        path: "contacts",
-        element: <ContactFeedback/>
+        path: "users",
+        element: <Users/>
       },
     ]
   },
