@@ -8,4 +8,5 @@ public class SubjectDTO {
     private String name;
     private String description;
     private String imageUrl;
+    private String status;
 }

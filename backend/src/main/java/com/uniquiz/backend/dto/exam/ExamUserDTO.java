@@ -11,10 +11,12 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExamDTO {
+public class ExamUserDTO {
     private Integer id;
     private String title;
+    private String subjectName;
     private Integer duration;
+    private Integer totalQuestions;
     private String status;
     private LocalDate createdAt;
 }

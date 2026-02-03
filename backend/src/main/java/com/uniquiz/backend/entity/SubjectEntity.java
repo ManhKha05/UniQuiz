@@ -33,4 +33,7 @@ public class SubjectEntity {
 
     @OneToMany(mappedBy = "subject",  fetch = FetchType.LAZY)
     List<ExamEntity> exams;
+
+    @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
+    List<QuestionEntity> questions;
 }

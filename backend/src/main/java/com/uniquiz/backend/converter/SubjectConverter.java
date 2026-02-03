@@ -13,7 +13,10 @@ public class SubjectConverter {
     private ModelMapper modelMapper;
 
     public SubjectDTO toDTO(SubjectEntity subjectEntity) {
-        SubjectDTO subjectDto = modelMapper.map(subjectEntity, SubjectDTO.class);
-        return subjectDto;
+        return modelMapper.map(subjectEntity, SubjectDTO.class);
+    }
+
+    public SubjectEntity toEntity(SubjectDTO subjectDto) {
+        return modelMapper.map(subjectDto, SubjectEntity.class);
     }
 }

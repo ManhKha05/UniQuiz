@@ -40,4 +40,8 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user",  fetch = FetchType.LAZY)
     private List<ResetPasswordTokenEntity> resetPasswordTokenEntityList;
+
+    @OneToMany(mappedBy = "user")
+    private List<ResultEntity>  results;
+
 }

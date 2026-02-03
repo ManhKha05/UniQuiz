@@ -5,6 +5,10 @@ import com.uniquiz.backend.dto.subject.SubjectDTO;
 import com.uniquiz.backend.entity.SubjectEntity;
 import com.uniquiz.backend.repository.SubjectRepository;
 import com.uniquiz.backend.service.SubjectService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,14 +27,23 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectDTO> getSubjects() {
-        List<SubjectEntity> subjectEntities = subjectRepository.findAllByStatus("ACTIVE");
-        List<SubjectDTO> subjectDTOS = new ArrayList<>();
-        for (SubjectEntity subjectEntity : subjectEntities) {
-            subjectDTOS.add(subjectConverter.toDTO(subjectEntity));
+    public Page<SubjectDTO> getSubjects(Integer page, Integer size, String keyword, String status) {
+        if (page == null) {
+            page = 0;
+            size = Integer.MAX_VALUE;
         }
-        return subjectDTOS;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SubjectEntity> subjectEntities = subjectRepository.find(keyword, status, pageable);
+        return subjectEntities.map(subjectConverter::toDTO);
     }
+
+    @Override
+    public SubjectDTO addSubject(SubjectDTO subjectDTO) {
+        SubjectEntity subjectEntity = subjectConverter.toEntity(subjectDTO);
+        subjectRepository.save(subjectEntity);
+        return subjectConverter.toDTO(subjectEntity);
+    }
+
 
     @Override
     public SubjectDTO getSubjectById(Integer id) {

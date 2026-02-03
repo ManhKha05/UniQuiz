@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ContactRequest {
+public class ContactDTO {
     private Integer id;
     private String name;
     private String email;

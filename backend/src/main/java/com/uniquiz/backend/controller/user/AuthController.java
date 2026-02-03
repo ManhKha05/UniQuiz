@@ -1,4 +1,4 @@
-package com.uniquiz.backend.controller;
+package com.uniquiz.backend.controller.user;
 
 import com.uniquiz.backend.dto.auth.ForgotPasswordRequest;
 import com.uniquiz.backend.dto.auth.RegisterRequest;
@@ -9,13 +9,11 @@ import com.uniquiz.backend.entity.UserEntity;
 import com.uniquiz.backend.security.JwtUtil;
 import com.uniquiz.backend.service.AuthService;
 import org.apache.coyote.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

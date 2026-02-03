@@ -1,4 +1,4 @@
-package com.uniquiz.backend.controller;
+package com.uniquiz.backend.controller.user;
 
 import com.uniquiz.backend.dto.contact.ContactDTO;
 import com.uniquiz.backend.dto.contact.DashboardContactDTO;
@@ -18,31 +18,11 @@ public class ContactController {
     @Autowired
     private ContactService contactService;
 
-    @GetMapping("contacts/dashboard")
-    public ResponseEntity<?> getDashboard() {
-        DashboardContactDTO dashboard =  contactService.getDashboardContact();
-        return ResponseEntity.ok(dashboard);
-    }
-
-    @GetMapping("contacts")
-    public ResponseEntity<?> getAllContacts(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String status)
-    {
-        List<ContactDTO> contactDTOs = contactService.getAllContacts(keyword, status);
-        return ResponseEntity.ok(contactDTOs);
-    }
-
     @PostMapping("contact")
     public ResponseEntity<?> addContact(@RequestBody ContactDTO contact) {
         contactService.addContact(contact);
         return ResponseEntity.ok(Map.of("message", "Gửi thành công"));
     }
 
-    @PatchMapping("contacts/{id}/status")
-    public ResponseEntity<?> updateStatus(@PathVariable("id") Integer id, @RequestBody UpdateContactStatusRequest req) {
-        ContactDTO contactDTO = contactService.updateStatus(id, req);
-        return ResponseEntity.ok(contactDTO);
-    }
 
 }
