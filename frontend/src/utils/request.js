@@ -22,10 +22,13 @@ export const get = async (path, params = {}) => {
 }
 
 export const post = async (path, options) => {
+  const token = localStorage.getItem("token");
+
   const res = await fetch(API_DOMAIN + path, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      ...(token && {Authorization:  `Bearer ${token}`})
     },
     body: JSON.stringify(options)
   });
@@ -34,10 +37,13 @@ export const post = async (path, options) => {
 }
 
 export const put = async (path, options) => {
+  const token = localStorage.getItem("token");
+
   const res = await fetch(API_DOMAIN + path, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      ...(token && {Authorization:  `Bearer ${token}`})
     },
     body: JSON.stringify(options)
   });
@@ -46,10 +52,13 @@ export const put = async (path, options) => {
 }
 
 export const patch = async (path, options) => {
+  const token = localStorage.getItem("token");
+
   const res = await fetch(API_DOMAIN + path, {
     method: "PATCH",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      ...(token && {Authorization:  `Bearer ${token}`})
     },
     body: JSON.stringify(options)
   });
@@ -58,8 +67,11 @@ export const patch = async (path, options) => {
 }
 
 export const del = async (path) => {
+  const token = localStorage.getItem("token");
+
   const res = await fetch(API_DOMAIN + path, {
-    method: "DELETE"
+    method: "DELETE",
+    ...(token && {Authorization:  `Bearer ${token}`})
   });
   // const result = await res.json();
   return res;

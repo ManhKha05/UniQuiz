@@ -145,7 +145,7 @@ function QuestionsEdit({ mode, subjects, id, onReload }) {
                   <Col span={24} key={keyAnswer}>
                     {/* Gán key A/B/C/D */}
                     <Form.Item
-                      name={['answers', index, 'key']}
+                      name={['answers', index, 'id']}
                       initialValue={index}
                       hidden
                     >

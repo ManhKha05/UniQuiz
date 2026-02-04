@@ -1,68 +1,110 @@
 import { Button, Col, Form, Input, Row, Select, Table } from "antd";
 import "./Results.scss"
+import { useEffect, useState } from "react";
+import { get } from "../../../utils/request";
+import { formatDateTime } from "../../../utils/date";
 
 function Results() {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [total, setTotal] = useState();
+  const [keyword, setKeyword] = useState("");
+  const [subjectId, setSubjectId] = useState();
+  const [examId, setExamId] = useState();
+  const [sort, setSort] = useState("newest");
+  const [subjects, setSubjects] = useState([]);
+  const [exams, setExams] = useState([]);
+  const [results, setResults] = useState([]);
 
-  const dataSource = [
-    {
-      id: '1',
-      name: 'Nguyễn Mạnh Kha',
-      username: "kha1",
-      exam: 'Luyện tập số 1',
-      subject: 'Lịch sử Đảng',
-      correct: '19/20',
-      grade: '9.5',
-      duration: '40 phút',
-      time: '12:00 26-01-2026'
-    },
-  ];
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const [subjectsRes, examsRes, resultsRes] = await Promise.all([
+          get('subjects'),
+          get('admin/exams', {
+            subjectId
+          }),
+          get('admin/results', {
+            page: page - 1,
+            pageSize,
+            keyword,
+            subjectId: subjectId === "" ? null : subjectId,
+            examId: examId === "" ? null : examId,
+            sort
+          })
+        ]);
+        const subjectsData = await subjectsRes.json();
+        const examsData = await examsRes.json();
+        const resultsData = await resultsRes.json();
+        setSubjects(subjectsData.content);
+        setExams(examsData.content);
+        setResults(resultsData.content);
+        setTotal(resultsData.totalElements);
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchApi();
+  }, [page, pageSize, keyword, subjectId, examId, sort])
+
+  console.log(subjectId, examId);
+  console.log(results);
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter') {
+      setKeyword(e.target.value);
+    }
+  }
+
 
   const columns = [
     {
       title: 'THÍ SINH',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'fullName',
+      key: 'fullName',
     },
     {
       title: 'USERNAME',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'username',
+      key: 'username',
     },
     {
       title: 'ĐỀ',
-      dataIndex: 'exam',
-      key: 'exam',
+      dataIndex: 'title',
+      key: 'title',
     },
     {
       title: 'MÔN',
-      dataIndex: 'subject',
-      key: 'subject',
+      dataIndex: 'subjectName',
+      key: 'subjectName',
     },
-    {
-      title: 'SỐ CÂU ĐÚNG',
-      dataIndex: 'correct',
-      key: 'correct',
-    },
+    // {
+    //   title: 'SỐ CÂU ĐÚNG',
+    //   dataIndex: 'correct',
+    //   key: 'correct',
+    // },
     {
       title: 'ĐIỂM SỐ',
-      dataIndex: 'grade',
-      key: 'grade',
+      key: 'score',
+      render: (_, { score }) => (
+        score.toFixed(2)
+      )
     },
     {
       title: 'THỜI GIAN LÀM BÀI',
-      dataIndex: 'duration',
       key: 'duration',
+      render: (_, { duration }) => (
+        `${Math.floor(duration / 60)} phút ${duration % 60} giây`
+      )
     },
     {
       title: 'NGÀY NỘP',
-      dataIndex: 'time',
-      key: 'time',
+      key: 'submitTime',
+      render: (_, { submitTime }) => (
+        formatDateTime(submitTime)
+      )
     },
   ];
-
-  const handleFilter = (e) => {
-    console.log(e);
-  }
 
   return (
     <>
@@ -70,67 +112,76 @@ function Results() {
         <h1 className="resultsAd__title">
           Quản lí kết quả & bài làm
         </h1>
-        <Form
-          onFinish={handleFilter}
-          layout="vertical"
-          className="resultsAd__filter"
-        >
+        <div className="resultsAd__filter">
           <Row gutter={[20, 0]} align="middle">
             <Col span={7}>
-              <Form.Item
-                label="Tìm kiếm thí sinh"
-                name="name"
-              >
-                <Input placeholder="Tìm kiếm theo tên hoặc username" />
-              </Form.Item>
+              <label>Tìm kiếm thí sinh</label>
+              <Input placeholder="Tìm kiếm theo tên hoặc username" onKeyDown={handleSearch} />
             </Col >
 
             <Col span={5}>
-              <Form.Item
-                label="Bài kiểm tra"
-                name="exam"
-                initialValue="all"
-              >
-                <Select
-                  // defaultValue="all"
-                  options={[
-                    { value: 'all', label: 'Tất cả' },
-                    { value: '1', label: 'Chương 1 - TTHCM' }
-                  ]}
-                />
-              </Form.Item>
+              <label>Môn học</label>
+              <Select
+                defaultValue=""
+                options={[
+                  { value: "", label: 'Tất cả' },
+                  ...subjects.map(item => ({
+                    value: item.id,
+                    label: item.name
+                  }))
+                ]}
+                onChange={e => setSubjectId(e)}
+                style={{ width: '100%' }}
+              />
             </Col>
 
             <Col span={5}>
-              <Form.Item
-                label="Lọc theo điểm"
-                name="grade"
-                initialValue="all"
-              >
-                <Select
-                  // defaultValue="all"
-                  options={[
-                    { value: 'all', label: 'Tất cả' },
-                    { value: '9', label: 'Xuất sắc (>=9)' },
-                    { value: '7', label: 'Khá (7 - 8.9)' },
-                    { value: '5', label: 'Trung bình (5 - 6.9)' },
-                    { value: '0', label: 'Yếu (<5)' },
-                  ]}
-                />
-              </Form.Item>
+              <label>Đề</label>
+              <Select
+                defaultValue=""
+                options={[
+                  { value: "", label: 'Tất cả' },
+                  ...exams.map(item => ({
+                    value: item.id,
+                    label: item.title
+                  }))
+                ]}
+                onChange={e => setExamId(e)}
+                style={{ width: '100%' }}
+              />
             </Col>
 
             <Col span={5}>
-              <Button type="primary" htmlType="submit">
-                Lọc
-              </Button>
+              <label >Sắp xếp</label>
+              <Select
+                defaultValue={"newest"}
+                options={[
+                  { value: 'newest', label: 'Mới nhất' },
+                  { value: 'desc', label: 'Điểm giảm dần' },
+                  { value: 'asc', label: 'Điểm tăng dần' }
+                ]}
+                onChange={(e) => setSort(e)}
+                style={{ width: '100%' }}
+              />
             </Col>
           </Row >
-        </Form >
+        </div>
         <Table
           rowKey="id"
-          dataSource={dataSource}
+          dataSource={results}
           columns={columns}
+          pagination={{
+            current: page,
+            pageSize,
+            total,
+            showSizeChanger: true,
+            pageSizeOptions: [5, 10, 20],
+            showTotal: (total) => `Tổng ${total} bài làm`
+          }}
+          onChange={(pagination) => {
+            setPage(pagination.current);
+            setPageSize(pagination.pageSize);
+          }}
         />
       </div >
     </>

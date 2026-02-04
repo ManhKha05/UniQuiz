@@ -7,7 +7,7 @@ import { get, post } from "../../../utils/request";
 
 function ExamDo() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(10 * 60);
+  const [timeLeft, setTimeLeft] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const [exam, setExam] = useState([]);
@@ -39,13 +39,17 @@ function ExamDo() {
 
 
   useEffect(() => {
+    if (timeLeft === null) return;
     if (timeLeft <= 0) {
       handleSubmit();
       return
     }
-    setTimeout(() => {
-      setTimeLeft(timeLeft - 1);
-    }, 1000);
+
+    const timer = setTimeout(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000)
+
+    return () => clearTimeout(timer)
   }, [timeLeft])
 
   const formatTimer = () => {
@@ -111,7 +115,7 @@ function ExamDo() {
                         value={answer.id}
                         onChange={() => handleChange(question.id, answer.id)}
                       />
-                      <span>{String.fromCharCode(65 + index)}. {answer.content}.</span>
+                      <span>{String.fromCharCode(65 + index)}. {answer.content}</span>
                     </label>
                   ))}
                 </div>

@@ -2,7 +2,7 @@ import { Layout, Menu } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import "./LayoutAdmin.scss";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, Navigate } from "react-router-dom";
 import logo from "../../assets/images/UniQuiz-r.png"
 import { FaUsersCog, FaFileSignature  } from "react-icons/fa";
 import { MdContacts  } from "react-icons/md";
@@ -12,6 +12,11 @@ import { MdDashboard } from "react-icons/md";
 import { BsFillQuestionSquareFill } from "react-icons/bs";
 
 function LayoutAdmin() {
+  const role = localStorage.getItem('role');
+  console.log(role);
+  if(role === 'ROLE_USER' || role === null){
+    return <Navigate to="/404" replace />;
+  } 
 
   const items = [
      {

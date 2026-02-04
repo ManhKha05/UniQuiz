@@ -89,7 +89,7 @@ function Questions() {
       render: (_, record) => (
         <Space style={{ fontSize: '15px' }}>
           <QuestionsEdit subjects={subjects} id={record.id} onReload={handleReload} />
-          <Popconfirm
+          {/* <Popconfirm
             title="Câu hỏi này sẽ không còn hiển thị trong đề thi. Bạn có chắc chắn?"
             onConfirm={() => handleDelete(record.id)}
             // onCancel={cancel}
@@ -97,7 +97,7 @@ function Questions() {
             cancelText="Hủy"
           >
             <a style={{ color: "orange" }}>Xóa</a>
-          </Popconfirm>
+          </Popconfirm> */}
         </Space>
       )
     },
@@ -120,21 +120,21 @@ function Questions() {
   }
 
 
-  const handleDelete = (id) => {
-    const fetchApi = async () => {
-      try {
-        const res = await del(`admin/questions/${id}`);
-        if (!res.ok) {
-          throw new Error()
-        }
-        messageApi.success("Xóa câu hỏi thành công");
-        handleReload()
-      } catch (error) {
-        console.log("Lỗi xóa câu hỏi: ", error)
-      }
-    }
-    fetchApi()
-  }
+  // const handleDelete = (id) => {
+  //   const fetchApi = async () => {
+  //     try {
+  //       const res = await del(`admin/questions/${id}`);
+  //       if (!res.ok) {
+  //         throw new Error()
+  //       }
+  //       messageApi.success("Xóa câu hỏi thành công");
+  //       handleReload()
+  //     } catch (error) {
+  //       console.log("Lỗi xóa câu hỏi: ", error)
+  //     }
+  //   }
+  //   fetchApi()
+  // }
 
   return (
     <>

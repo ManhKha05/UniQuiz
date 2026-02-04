@@ -16,18 +16,20 @@ function Login() {
   const onFinish = async (e) => {
     const res = await post("auth/login", e)
     if (!res.ok) {
+      const error = await res.json();
       messageApi.error({
         style: {
           // marginTop: "30px",
           fontSize: '16px'
         },
-        content: 'Bạn đã nhập sai tài khoản hoặc mật khẩu!',
+        content: error.message,
       });
       return;
     }
     const data = await res.json();
     localStorage.setItem("token", data.token)
     localStorage.setItem("user", data.username)
+    localStorage.setItem("role", data.role)
 
     dispatch(loginSuccess());
 

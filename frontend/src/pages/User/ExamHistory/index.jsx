@@ -122,7 +122,7 @@ function ExamHistory() {
                   </button>
                 </div>
                 <h2 className="examhistory__item-right">
-                  {item.score.toFixed(2)}/10
+                  {item.score?.toFixed(2)}/10
                 </h2>
               </div>
             ))}

@@ -95,8 +95,10 @@ function Exams() {
     },
     {
       title: 'ĐIỂM TB',
-      dataIndex: 'averageScore',
-      key: 'averageScore'
+      key: 'averageScore',
+      render: (_, { averageScore }) => (
+        averageScore.toFixed(2)
+      )
     },
     {
       title: 'THỜI GIAN TẠO',
@@ -236,7 +238,7 @@ function Exams() {
         {viewMode === 'grid' ? (
           <div className="examsAd__list">
             <Row gutter={[20, 20]}>
-              {exams.map(item => (
+              {(exams || []).map(item => (
                 <Col span={8} key={item.id}>
                   <div className="examsAd-item">
                     <h2 className="examsAd-item__title">

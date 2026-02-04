@@ -14,8 +14,26 @@ function Register() {
   const [messageApi, contextHolder] = message.useMessage();
 
   const onFinish = async (e) => {
+    if (e.password !== e.confirmPassword) {
+      messageApi.error({
+        style: {
+          fontSize: '16px'
+        },
+        content: 'Mật khẩu không trùng nhau!',
+      })
+      return
+    }
+
     const res = await post("auth/register", e);
+
     if (!res.ok) {
+      const error = await res.json();
+      messageApi.error({
+        style: {
+          fontSize: '16px'
+        },
+        content: error.message,
+      });
       return;
     }
     messageApi.success({
