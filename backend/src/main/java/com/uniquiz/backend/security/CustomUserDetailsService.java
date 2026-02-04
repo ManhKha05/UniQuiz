@@ -18,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByUsername(username);
         if (userEntity == null) {
-            throw new UsernameNotFoundException("Not found user: " + username);
+            throw new UsernameNotFoundException("Bạn đã nhập sai tài khoản hoặc mật khẩu!");
         }
         return new CustomUserDetails(userEntity);
     }

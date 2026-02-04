@@ -7,6 +7,7 @@ import com.uniquiz.backend.dto.question.QuestionDetailDTO;
 import com.uniquiz.backend.entity.AnswerEntity;
 import com.uniquiz.backend.entity.QuestionEntity;
 import com.uniquiz.backend.entity.SubjectEntity;
+import com.uniquiz.backend.repository.AnswerRepository;
 import com.uniquiz.backend.repository.QuestionRepository;
 import com.uniquiz.backend.repository.SubjectRepository;
 import com.uniquiz.backend.service.QuestionService;
@@ -28,6 +29,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
     private QuestionConverter questionConverter;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @Autowired
     private SubjectRepository subjectRepository;
@@ -109,20 +113,18 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
         questionEntity.setSubject(subject);
 
-        questionEntity.getAnswers().clear();
         List<AnswerEntity> answers = new ArrayList<>();
         for (int i = 0; i < rq.getAnswers().size(); i++) {
             AnswerDTO answer = rq.getAnswers().get(i);
 
-            AnswerEntity answerEntity = new AnswerEntity();
+            AnswerEntity answerEntity = answerRepository.findById(answer.getId()).get();
             answerEntity.setContent(answer.getContent());
-            answerEntity.setQuestion(questionEntity);
             if (i == rq.getCorrectAnswer()) {
                 answerEntity.setIsCorrect(1);
-            } else  {
+            } else {
                 answerEntity.setIsCorrect(0);
             }
-            questionEntity.getAnswers().add(answerEntity);
+            answerRepository.save(answerEntity);
         }
 
         questionRepository.save(questionEntity);

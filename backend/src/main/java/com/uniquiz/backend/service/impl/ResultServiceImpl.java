@@ -3,6 +3,7 @@ package com.uniquiz.backend.service.impl;
 import com.uniquiz.backend.dto.answer.AnswerDoingDTO;
 import com.uniquiz.backend.dto.answer.AnswerResultDTO;
 import com.uniquiz.backend.dto.answer.AnswerSubmitDTO;
+import com.uniquiz.backend.dto.exam.AdminExamResultDTO;
 import com.uniquiz.backend.dto.exam.ExamDoingDTO;
 import com.uniquiz.backend.dto.exam.SubmitExamRequest;
 import com.uniquiz.backend.dto.question.QuestionDoingDTO;
@@ -15,6 +16,10 @@ import com.uniquiz.backend.security.CustomUserDetails;
 import com.uniquiz.backend.service.ResultService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -94,14 +99,13 @@ public class ResultServiceImpl implements ResultService {
             userAnswerEntity.setAnswer(answerEntity);
             userAnswerRepository.save(userAnswerEntity);
 
-            if (answerEntity.getIsCorrect() == 1) {
-                totalCorrect++;
-            }
+//            if (answerEntity.getIsCorrect() == 1) {
+//                totalCorrect++;
+//            }
         }
 
         ResultEntity result = resultRepository.findById(rq.getResultId()).get();
-        totalQuestion = result.getExam().getQuestions().size();
-        result.setScore(1.0 * totalCorrect /  totalQuestion * 10);
+//        totalQuestion = result.getExam().getQuestions().size();
         result.setSubmitTime(LocalDateTime.now());
         resultRepository.save(result);
     }
@@ -116,7 +120,7 @@ public class ResultServiceImpl implements ResultService {
         ResultEntity resultEntity = resultRepository.findById(id).get();
         result.setExamId(resultEntity.getExam().getId());
         result.setTitle(resultEntity.getExam().getTitle());
-        result.setGrade(resultEntity.getScore());
+        result.setGrade(calulateGrade(resultEntity.getId()));
 
         int totalQuestion = resultEntity.getExam().getQuestions().size();
         result.setTotalQuestions(totalQuestion);
@@ -124,11 +128,13 @@ public class ResultServiceImpl implements ResultService {
         LocalDateTime start = resultEntity.getStartTime();
         LocalDateTime end = resultEntity.getSubmitTime();
         result.setDuration(Duration.between(start, end).toSeconds());
+
         result.setSubmittedDate(resultEntity.getSubmitTime());
 
         List<QuestionResultDTO>  questions = new ArrayList<>();
         for (QuestionEntity questionEntity : resultEntity.getExam().getQuestions()) {
             QuestionResultDTO question = new QuestionResultDTO();
+
             question.setId(questionEntity.getId());
             question.setContent(questionEntity.getContent());
 
@@ -180,12 +186,58 @@ public class ResultServiceImpl implements ResultService {
             result.setSubjectName(resultEntity.getExam().getSubject().getName());
             result.setDuration(resultEntity.getExam().getDuration());
             result.setTotalQuestions(resultEntity.getExam().getQuestions().size());
-            result.setScore(resultEntity.getScore());
+            result.setScore(calulateGrade(resultEntity.getId()));
             result.setSubmittedAt(resultEntity.getSubmitTime());
 
             resultHistory.add(result);
         }
         return resultHistory;
+    }
+
+    @Override
+    public Page<AdminExamResultDTO> getResultListAdmin(
+            Integer page,  Integer pageSize, String keyword, Integer subjectId, Integer examId, String sort
+    ) {
+        Sort sortBy = null;
+        if (sort.equals("newest")) {
+            sortBy = Sort.by("submitTime").descending();
+        } else if (sort.equals("desc")) {
+            sortBy = Sort.by("score").descending();
+        } else if (sort.equals("asc")) {
+            sortBy = Sort.by("score").ascending();
+        }
+
+        Pageable pageable = PageRequest.of(page, pageSize, sortBy);
+
+        Page<ResultEntity> resultEntities = resultRepository.findResultsAdmin(keyword, subjectId, examId, pageable);
+        Page<AdminExamResultDTO> results = resultEntities.map(r -> new AdminExamResultDTO(
+                r.getId(),
+                r.getUser().getFullName(),
+                r.getUser().getUsername(),
+                r.getExam().getTitle(),
+                r.getExam().getSubject().getName(),
+                calulateGrade(r.getId()),
+                Duration.between(r.getStartTime(), r.getSubmitTime()).toSeconds(),
+                r.getSubmitTime()
+        ));
+        return results;
+    }
+
+    @Override
+    public double calulateGrade(Integer resultId) {
+        int totalCorrect = 0;
+        int totalQuestion = 0;
+
+        ResultEntity resultEntity = resultRepository.findById(resultId).get();
+        totalQuestion = resultEntity.getExam().getQuestions().size();
+        for (UserAnswerEntity userAnswerEntity : resultEntity.getUserAnswers()) {
+            AnswerEntity answerEntity = userAnswerEntity.getAnswer();
+
+            if (answerEntity.getIsCorrect() == 1) {
+                totalCorrect++;
+            }
+        }
+        return (1.0 *  totalCorrect) / totalQuestion * 10 ;
     }
 
 

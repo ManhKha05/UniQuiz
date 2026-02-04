@@ -41,6 +41,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserEntity register(RegisterRequest registerRequest) {
+        UserEntity user = userRepository.findByUsername(registerRequest.getUsername());
+        if (user != null) {
+            throw new RuntimeException("Tài khoản đã tồn tại!");
+        }
+
         UserEntity userEntity = userConverter.convert(registerRequest);
         userEntity.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         return userRepository.save(userEntity);

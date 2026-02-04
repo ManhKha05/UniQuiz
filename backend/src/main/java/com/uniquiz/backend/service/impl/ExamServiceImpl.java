@@ -12,6 +12,7 @@ import com.uniquiz.backend.repository.ExamRepository;
 import com.uniquiz.backend.repository.QuestionRepository;
 import com.uniquiz.backend.repository.SubjectRepository;
 import com.uniquiz.backend.service.ExamService;
+import com.uniquiz.backend.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class ExamServiceImpl implements ExamService {
     private final ExamConverter examConverter;
 
     private final QuestionRepository questionRepository;
+
+    @Autowired
+    private ResultService resultService;
 
 
     public ExamServiceImpl(ExamRepository examRepository, ExamConverter examConverter, SubjectRepository subjectRepository, QuestionRepository questionRepository) {
@@ -57,7 +61,12 @@ public class ExamServiceImpl implements ExamService {
         ExamEntity examEntity = examRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Exam Not Found"));
         ExamUserDTO examUserDTO = examConverter.toExamUserDTO(examEntity);
-        examUserDTO.setTotalQuestions(examEntity.getQuestions().size());
+        int totalQuestions = 0;
+        for (QuestionEntity questionEntity : examEntity.getQuestions()) {
+            if (questionEntity.getIsDeleted() == 0)
+                totalQuestions++;
+        }
+        examUserDTO.setTotalQuestions(totalQuestions);
         return examUserDTO;
     }
 
@@ -77,10 +86,8 @@ public class ExamServiceImpl implements ExamService {
             page = 0;
             size = Integer.MAX_VALUE;
         }
-        Sort sortObj = null;
-        if (sort.equals("NEWEST")) {
-            sortObj = Sort.by("createdAt").descending();
-        } else if (sort.equals("OLDEST")) {
+        Sort sortObj = Sort.by("createdAt").descending();
+        if (sort != null && sort.equals("OLDEST")) {
             sortObj = Sort.by("createdAt").ascending();
         }
 
@@ -102,7 +109,7 @@ public class ExamServiceImpl implements ExamService {
                 exam.setAverageScore(0.0);
             } else {
                 for (ResultEntity result : examEntity.getResults()) {
-                    totalGrade += result.getScore();
+                    totalGrade += resultService.calulateGrade(result.getId());
                 }
                 exam.setAverageScore(totalGrade / totalAttempts);
             }

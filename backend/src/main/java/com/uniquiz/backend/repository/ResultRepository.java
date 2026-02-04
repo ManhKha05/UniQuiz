@@ -2,6 +2,8 @@ package com.uniquiz.backend.repository;
 
 import com.uniquiz.backend.dto.adminDashboard.AttemptsRecentDTO;
 import com.uniquiz.backend.entity.ResultEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -41,10 +43,20 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Integer> {
 
     @Query("""
         SELECT r FROM ResultEntity r
-        JOIN ExamEntity e ON r.exam.id = e.id
+        JOIN r.exam e
         WHERE r.user.id = :userId
             AND (:keyword IS NULL OR e.title LIKE CONCAT('%', :keyword, '%'))
             AND (:subjectId IS NULL OR e.subject.id = :subjectId)    
     """)
     List<ResultEntity> findAllByUserId(Integer userId, String keyword, Integer subjectId);
+
+    @Query("""
+        SELECT r FROM ResultEntity r 
+        JOIN r.user u
+        JOIN r.exam e
+        WHERE (:keyword IS NULL OR u.fullName LIKE CONCAT('%', :keyword, '%') OR u.username LIKE CONCAT('%', :keyword, '%') )
+            AND (:subjectId IS NULL OR e.subject.id = :subjectId)
+            AND (:examId IS NULL OR e.id = :examId)
+    """)
+    Page<ResultEntity> findResultsAdmin(String keyword, Integer subjectId, Integer examId, Pageable pageable);
 }

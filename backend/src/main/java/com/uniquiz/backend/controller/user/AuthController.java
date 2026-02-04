@@ -6,6 +6,7 @@ import com.uniquiz.backend.dto.auth.ResetPasswordRequest;
 import com.uniquiz.backend.dto.jwt.JwtResponse;
 import com.uniquiz.backend.dto.auth.LoginRequest;
 import com.uniquiz.backend.entity.UserEntity;
+import com.uniquiz.backend.security.CustomUserDetails;
 import com.uniquiz.backend.security.JwtUtil;
 import com.uniquiz.backend.service.AuthService;
 import org.apache.coyote.BadRequestException;
@@ -39,7 +40,12 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        if (userDetails.getStatus().equals("BLOCKED")) {
+            throw new RuntimeException("Tài khoản của bạn đã bị khóa, vui lòng liên hệ quản trị viên!");
+        }
+
         String token = jwtUtil.generateToken(userDetails);
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 

@@ -18,6 +18,10 @@ public class CustomUserDetails implements UserDetails {
         return user.getId();
     }
 
+    public String getStatus () {
+        return user.getStatus();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.user.getRole()));
