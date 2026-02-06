@@ -17,7 +17,7 @@ function QuestionsEdit({ mode, subjects, id, onReload }) {
   const showModalEdit = async (id) => {
     const fetchApi = async () => {
       try {
-        const res = await get(`questions/${id}`)
+        const res = await get(`admin/questions/${id}`)
         if (!res.ok) {
           throw new Error()
         }
@@ -38,6 +38,7 @@ function QuestionsEdit({ mode, subjects, id, onReload }) {
   };
 
   const onFinish = (e) => {
+    console.log(e);
     const fetchApi = async () => {
       try {
         let res = null;

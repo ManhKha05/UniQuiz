@@ -1,7 +1,7 @@
 import { Button, Form, Input, Modal, notification, Select, Upload } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useState } from "react";
-import { post } from "../../../../utils/request";
+import { post, put } from "../../../../utils/request";
 import { UploadOutlined } from '@ant-design/icons';
 
 const CLOUD_NAME = "dcjraarbb";
@@ -50,9 +50,16 @@ function SubjectsEdit({ mode, record, onReload }) {
 
   const onFinish = (e) => {
     const newSubject = { ...e, imageUrl };
+    console.log(newSubject);
     const fetchApi = async () => {
       try {
-        const res = await post("admin/subjects", newSubject);
+        let res = null;
+        if (mode === 'CREATE') {
+          res = await post("admin/subjects", newSubject);
+        }
+        else {
+          res = await put("admin/subjects", newSubject);
+        }
         if (!res.ok) {
           throw new Error();
         }

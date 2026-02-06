@@ -2,7 +2,7 @@ import { IoIosSearch } from "react-icons/io";
 import "./Users.scss";
 import { notification, Popconfirm, Space, Table, Tag } from "antd";
 import { useEffect, useState } from "react";
-import { get, put } from "../../../utils/request"
+import { get, patch, put } from "../../../utils/request"
 import dayjs from "dayjs";
 
 function Users() {
@@ -110,7 +110,7 @@ function Users() {
   const handleStatus = (id) => {
     const fetchApi = async () => {
       try {
-        const res = await put(`admin/users/${id}/status`)
+        const res = await patch(`admin/users/${id}/status`)
         if (!res.ok) {
           throw new Error();
         }

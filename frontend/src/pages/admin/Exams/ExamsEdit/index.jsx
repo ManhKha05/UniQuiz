@@ -22,7 +22,7 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
   useEffect(() => {
     const fetchApi = async () => {
       try {
-        const res = await get('questions', {
+        const res = await get('admin/questions', {
           page: page - 1,
           pageSize,
           keyword,
@@ -77,6 +77,7 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
   }
 
   const onFinish = (e) => {
+    console.log(e);
     const fetchApi = async () => {
       try {
         let res = null;

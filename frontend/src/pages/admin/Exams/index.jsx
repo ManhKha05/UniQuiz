@@ -32,7 +32,7 @@ function Exams() {
           get('subjects', { status: 'ACTIVE' }),
           get('admin/exams', {
             page: page - 1,
-            size: pageSize,
+            pageSize,
             keyword,
             subjectId: subjectId === 'ALL' ? null : subjectId,
             status: status === 'ALL' ? null : status,

@@ -69,6 +69,8 @@ function ExamDo() {
       )
     }
 
+    console.log(payload);
+
     const res = await post('exams/submit', payload);
     navigate(`/exam-result/${exam.resultId}`)
     setIsModalOpen(false);

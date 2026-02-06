@@ -22,7 +22,7 @@ function Questions() {
     const fetchApi = async () => {
       try {
         const [questionsRes, subjectsRes] = await Promise.all([
-          get('questions', {
+          get('admin/questions', {
             page: page - 1,
             size: pageSize,
             keyword,
