@@ -58,5 +58,5 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Integer> {
             AND (:subjectId IS NULL OR e.subject.id = :subjectId)
             AND (:examId IS NULL OR e.id = :examId)
     """)
-    Page<ResultEntity> findResultsAdmin(String keyword, Integer subjectId, Integer examId, Pageable pageable);
+    List<ResultEntity> findResultsAdmin(String keyword, Integer subjectId, Integer examId);
 }

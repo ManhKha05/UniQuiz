@@ -18,5 +18,4 @@ public class ExamUserDTO {
     private Integer duration;
     private Integer totalQuestions;
     private String status;
-    private LocalDate createdAt;
 }

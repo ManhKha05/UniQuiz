@@ -65,6 +65,7 @@ public class QuestionServiceImpl implements QuestionService {
             AnswerDTO answerDTO = new AnswerDTO();
             answerDTO.setId(answerEntity.getId());
             answerDTO.setContent(answerEntity.getContent());
+            answerDTO.setIsCorrect(answerEntity.getIsCorrect());
             if (answerEntity.getIsCorrect() == 1) questionDetailDTO.setCorrectAnswer(i);
             answers.add(answerDTO);
         }

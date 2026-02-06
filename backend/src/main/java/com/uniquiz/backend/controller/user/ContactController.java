@@ -23,6 +23,4 @@ public class ContactController {
         contactService.addContact(contact);
         return ResponseEntity.ok(Map.of("message", "Gửi thành công"));
     }
-
-
 }

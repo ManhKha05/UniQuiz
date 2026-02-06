@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.naming.ConfigurationException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -40,10 +41,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserEntity register(RegisterRequest registerRequest) {
+    public UserEntity register(RegisterRequest registerRequest) throws ConfigurationException {
         UserEntity user = userRepository.findByUsername(registerRequest.getUsername());
         if (user != null) {
-            throw new RuntimeException("Tài khoản đã tồn tại!");
+            throw new ConfigurationException("Tài khoản đã tồn tại!");
         }
 
         UserEntity userEntity = userConverter.convert(registerRequest);

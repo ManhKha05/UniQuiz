@@ -15,5 +15,6 @@ public interface ResultService {
     ResultDetailDTO getResult(Integer id);
     List<ResultHistoryDTO> getResultList(String keyword, Integer subjectId);
     Page<AdminExamResultDTO> getResultListAdmin(Integer page, Integer pageSize, String keyword, Integer subjectId, Integer examId, String sort);
-    double calulateGrade(Integer resultId);
+
+    double calculateGrade(Integer resultId);
 }

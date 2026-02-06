@@ -81,17 +81,17 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public Page<ExamAdminDTO> getExamsAdmin(Integer page, Integer size, String keyword, Integer subjectId, String status, String sort) {
-        if (page == null || size == null) {
+    public Page<ExamAdminDTO> getExamsAdmin(Integer page, Integer pageSize, String keyword, Integer subjectId, String status, String sort) {
+        if (page == null || pageSize == null) {
             page = 0;
-            size = Integer.MAX_VALUE;
+            pageSize = Integer.MAX_VALUE;
         }
         Sort sortObj = Sort.by("createdAt").descending();
         if (sort != null && sort.equals("OLDEST")) {
             sortObj = Sort.by("createdAt").ascending();
         }
 
-        Pageable pageable = PageRequest.of(page, size, sortObj);
+        Pageable pageable = PageRequest.of(page, pageSize, sortObj);
 
         Page<ExamEntity> examEntities = examRepository.findExamsAdminList(keyword, subjectId, status, pageable);
         Page<ExamAdminDTO> examAdminDTOS = examEntities.map(examEntity -> {
@@ -109,7 +109,7 @@ public class ExamServiceImpl implements ExamService {
                 exam.setAverageScore(0.0);
             } else {
                 for (ResultEntity result : examEntity.getResults()) {
-                    totalGrade += resultService.calulateGrade(result.getId());
+                    totalGrade += resultService.calculateGrade(result.getId());
                 }
                 exam.setAverageScore(totalGrade / totalAttempts);
             }

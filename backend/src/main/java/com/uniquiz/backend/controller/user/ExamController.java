@@ -48,6 +48,6 @@ public class ExamController {
     @PostMapping("/exams/submit")
     public ResponseEntity<?> submitExam(@RequestBody SubmitExamRequest rq) {
         resultService.submitExam(rq);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(Map.of("message", "Submit Successfull"));
     }
 }

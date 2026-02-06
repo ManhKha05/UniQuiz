@@ -26,7 +26,7 @@ public class UserAdminController {
         return ResponseEntity.ok(users);
     }
 
-    @PutMapping("/users/{id}/status")
+    @PatchMapping("/users/{id}/status")
     public ResponseEntity<?> updateUserStatus(@PathVariable Integer id) throws BadRequestException {
         UserDTO user = userService.updateStatus(id);
         return ResponseEntity.ok().body(user);

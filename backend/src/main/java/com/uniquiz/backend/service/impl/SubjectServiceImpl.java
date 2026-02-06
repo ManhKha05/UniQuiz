@@ -5,6 +5,8 @@ import com.uniquiz.backend.dto.subject.SubjectDTO;
 import com.uniquiz.backend.entity.SubjectEntity;
 import com.uniquiz.backend.repository.SubjectRepository;
 import com.uniquiz.backend.service.SubjectService;
+import lombok.SneakyThrows;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,9 +47,11 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
 
+    @SneakyThrows
     @Override
     public SubjectDTO getSubjectById(Integer id) {
-        SubjectEntity subjectEntity = subjectRepository.findById(id).orElseThrow();
+        SubjectEntity subjectEntity = subjectRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Subject Not Found"));
         return  subjectConverter.toDTO(subjectEntity);
     }
 }

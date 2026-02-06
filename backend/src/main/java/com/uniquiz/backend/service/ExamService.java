@@ -9,7 +9,7 @@ public interface ExamService {
     List<ExamUserDTO> getExamsBySubjectId(Integer subjectId);
     ExamUserDTO getExamById(Integer id);
     DashboardExamDTO getDashboard();
-    Page<ExamAdminDTO> getExamsAdmin(Integer page, Integer size, String keyword, Integer subjectId, String status, String sort);
+    Page<ExamAdminDTO> getExamsAdmin(Integer page, Integer pageSize, String keyword, Integer subjectId, String status, String sort);
     void createExam(ExamCreateRequest rq);
     void updateExam(ExamCreateRequest rq);
 

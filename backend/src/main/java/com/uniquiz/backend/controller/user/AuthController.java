@@ -10,6 +10,7 @@ import com.uniquiz.backend.security.CustomUserDetails;
 import com.uniquiz.backend.security.JwtUtil;
 import com.uniquiz.backend.service.AuthService;
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.ConfigurationException;
 import java.util.Map;
 
 @RestController
@@ -56,9 +58,9 @@ public class AuthController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) throws ConfigurationException {
         UserEntity userEntity = authService.register(registerRequest);
-        return ResponseEntity.ok(Map.of("message", "Đăng ký thành công"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Đăng ký thành công"));
     }
 
 
