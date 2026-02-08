@@ -8,7 +8,7 @@ import org.apache.coyote.BadRequestException;
 import javax.naming.ConfigurationException;
 
 public interface AuthService {
-    UserEntity register(RegisterRequest registerRequest) throws ConfigurationException;
+    UserEntity register(RegisterRequest registerRequest);
     void processForgotPassword(String email);
     String getUsernameByTokenResetPassword(String token) throws BadRequestException;
     void resetPassword(String token, String password) throws BadRequestException;

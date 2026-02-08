@@ -7,6 +7,7 @@ import com.uniquiz.backend.dto.question.QuestionDetailDTO;
 import com.uniquiz.backend.entity.AnswerEntity;
 import com.uniquiz.backend.entity.QuestionEntity;
 import com.uniquiz.backend.entity.SubjectEntity;
+import com.uniquiz.backend.exceptions.BadRequestException;
 import com.uniquiz.backend.repository.AnswerRepository;
 import com.uniquiz.backend.repository.QuestionRepository;
 import com.uniquiz.backend.repository.SubjectRepository;
@@ -55,7 +56,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public QuestionDetailDTO getQuestion(Integer id) {
         QuestionEntity questionEntity = questionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question Not Found"));
+                .orElseThrow(() -> new BadRequestException("Question id " + id + " not found"));
         QuestionDetailDTO questionDetailDTO = questionConverter.toDetailDTO(questionEntity);
         questionDetailDTO.setSubjectId(questionEntity.getSubject().getId());
         
@@ -76,7 +77,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void createQuestion(QuestionDetailDTO rq) {
         SubjectEntity subject = subjectRepository.findById(rq.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new BadRequestException("Subject id " + rq.getSubjectId() + " not found"));
 
         QuestionEntity questionEntity = new QuestionEntity();
         questionEntity.setSubject(subject);
@@ -106,19 +107,20 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public void updateQuestion(Integer id, QuestionDetailDTO rq) {
         QuestionEntity questionEntity = questionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question Not Found"));
+                .orElseThrow(() -> new BadRequestException("Question id " + id + " not found"));
         questionEntity.setContent(rq.getContent());
         questionEntity.setLevel(rq.getLevel());
 
         SubjectEntity subject = subjectRepository.findById(rq.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new BadRequestException("Subject id " + rq.getSubjectId() + " not found"));
         questionEntity.setSubject(subject);
 
         List<AnswerEntity> answers = new ArrayList<>();
         for (int i = 0; i < rq.getAnswers().size(); i++) {
             AnswerDTO answer = rq.getAnswers().get(i);
 
-            AnswerEntity answerEntity = answerRepository.findById(answer.getId()).get();
+            AnswerEntity answerEntity = answerRepository.findById(answer.getId())
+                    .orElseThrow(() -> new BadRequestException("Answer id " + answer.getId() + " not found"));
             answerEntity.setContent(answer.getContent());
             if (i == rq.getCorrectAnswer()) {
                 answerEntity.setIsCorrect(1);
@@ -134,7 +136,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void deleteQuestion(Integer id) {
         QuestionEntity question = questionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question Not Found"));
+                .orElseThrow(() -> new BadRequestException("Question id " + id + " not found"));
         question.setIsDeleted(1);
         questionRepository.save(question);
     }

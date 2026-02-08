@@ -5,6 +5,7 @@ import com.uniquiz.backend.dto.auth.RegisterRequest;
 import com.uniquiz.backend.dto.auth.ResetPasswordRequest;
 import com.uniquiz.backend.entity.ResetPasswordTokenEntity;
 import com.uniquiz.backend.entity.UserEntity;
+import com.uniquiz.backend.exceptions.UserAlreadyExistsException;
 import com.uniquiz.backend.repository.ResetPasswordTokenRepository;
 import com.uniquiz.backend.repository.UserRepository;
 import com.uniquiz.backend.service.AuthService;
@@ -41,10 +42,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserEntity register(RegisterRequest registerRequest) throws ConfigurationException {
-        UserEntity user = userRepository.findByUsername(registerRequest.getUsername());
-        if (user != null) {
-            throw new ConfigurationException("Tài khoản đã tồn tại!");
+    public UserEntity register(RegisterRequest registerRequest) {
+        if (userRepository.findByUsername(registerRequest.getUsername()) != null) {
+            throw new UserAlreadyExistsException("Username đã tồn tại");
+        }
+        if (userRepository.findByEmail(registerRequest.getEmail()) != null) {
+            throw new UserAlreadyExistsException("Email đã được sử dụng");
         }
 
         UserEntity userEntity = userConverter.convert(registerRequest);

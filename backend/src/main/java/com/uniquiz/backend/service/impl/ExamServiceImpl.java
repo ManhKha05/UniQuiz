@@ -7,6 +7,7 @@ import com.uniquiz.backend.entity.ExamEntity;
 import com.uniquiz.backend.entity.QuestionEntity;
 import com.uniquiz.backend.entity.ResultEntity;
 import com.uniquiz.backend.entity.SubjectEntity;
+import com.uniquiz.backend.exceptions.BadRequestException;
 import com.uniquiz.backend.repository.AnswerRepository;
 import com.uniquiz.backend.repository.ExamRepository;
 import com.uniquiz.backend.repository.QuestionRepository;
@@ -59,7 +60,7 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public ExamUserDTO getExamById(Integer id) {
         ExamEntity examEntity = examRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Exam Not Found"));
+                .orElseThrow(() -> new BadRequestException("Exam id " + id + " not found"));
         ExamUserDTO examUserDTO = examConverter.toExamUserDTO(examEntity);
         int totalQuestions = 0;
         for (QuestionEntity questionEntity : examEntity.getQuestions()) {
@@ -124,7 +125,8 @@ public class ExamServiceImpl implements ExamService {
     public void createExam(ExamCreateRequest rq) {
         ExamEntity examEntity = examConverter.requestToExamEntity(rq);
 
-        SubjectEntity subject = subjectRepository.findById(rq.getSubjectId()).get();
+        SubjectEntity subject = subjectRepository.findById(rq.getSubjectId())
+                .orElseThrow(() -> new BadRequestException("Subject id " + rq.getSubjectId() + " not found"));
         examEntity.setSubject(subject);
 
 
@@ -136,7 +138,7 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public void updateExam(ExamCreateRequest rq) {
         ExamEntity exam = examRepository.findById(rq.getId())
-                .orElseThrow(() -> new RuntimeException("Exam not found"));
+                .orElseThrow(() -> new BadRequestException("Exam id " + rq.getId() + " not found"));
         exam.setTitle(rq.getTitle());
         exam.setDuration(rq.getDuration());
         exam.setStatus(rq.getStatus());
@@ -144,7 +146,7 @@ public class ExamServiceImpl implements ExamService {
         exam.getQuestions().clear();
 
         SubjectEntity subject = subjectRepository.findById(rq.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new BadRequestException("Subject id " + rq.getSubjectId() + " not found"));
         exam.setSubject(subject);
 
         List<QuestionEntity> questions =

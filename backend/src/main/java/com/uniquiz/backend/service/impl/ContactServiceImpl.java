@@ -5,17 +5,15 @@ import com.uniquiz.backend.dto.contact.ContactDTO;
 import com.uniquiz.backend.dto.contact.DashboardContactDTO;
 import com.uniquiz.backend.dto.contact.UpdateContactStatusRequest;
 import com.uniquiz.backend.entity.ContactEntity;
+import com.uniquiz.backend.exceptions.BadRequestException;
 import com.uniquiz.backend.repository.ContactRepository;
 import com.uniquiz.backend.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ContactServiceImpl implements ContactService {
@@ -48,7 +46,8 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public ContactDTO updateStatus(Integer id, UpdateContactStatusRequest req) {
-        ContactEntity contactEntity = contactRepository.findById(id).get();
+        ContactEntity contactEntity = contactRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy liên hệ với id = " + id));
         contactEntity.setStatus(req.getStatus());
         contactRepository.save(contactEntity);
 

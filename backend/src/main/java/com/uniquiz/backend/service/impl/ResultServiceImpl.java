@@ -11,6 +11,7 @@ import com.uniquiz.backend.dto.question.QuestionResultDTO;
 import com.uniquiz.backend.dto.result.ResultDetailDTO;
 import com.uniquiz.backend.dto.result.ResultHistoryDTO;
 import com.uniquiz.backend.entity.*;
+import com.uniquiz.backend.exceptions.BadRequestException;
 import com.uniquiz.backend.repository.*;
 import com.uniquiz.backend.security.CustomUserDetails;
 import com.uniquiz.backend.service.ResultService;
@@ -55,7 +56,8 @@ public class ResultServiceImpl implements ResultService {
         UserDetails user =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userEntity = userRepository.findByUsername(user.getUsername());
         result.setUser(userEntity);
-        ExamEntity examEntity = examRepository.findById(examId).get();
+        ExamEntity examEntity = examRepository.findById(examId)
+                .orElseThrow(() -> new BadRequestException("Exam id" + examId + " not found"));
         result.setExam(examEntity);
         result.setStartTime(LocalDateTime.now());
         resultRepository.save(result);
@@ -91,10 +93,12 @@ public class ResultServiceImpl implements ResultService {
         int totalQuestion = 0;
 
         for (AnswerSubmitDTO answer : rq.getAnswers()) {
-            AnswerEntity answerEntity = answerRepository.findById(answer.getAnswerId()).get();
+            AnswerEntity answerEntity = answerRepository.findById(answer.getAnswerId())
+                    .orElseThrow(() -> new BadRequestException("Answer id " + answer.getAnswerId() + " not found"));
 
             UserAnswerEntity userAnswerEntity = new UserAnswerEntity();
-            userAnswerEntity.setResult(resultRepository.findById(rq.getResultId()).get());
+            userAnswerEntity.setResult(resultRepository.findById(rq.getResultId())
+                    .orElseThrow(() -> new BadRequestException("Result id " + rq.getResultId() + " not found")));
             userAnswerEntity.setQuestion(answerEntity.getQuestion());
             userAnswerEntity.setAnswer(answerEntity);
             userAnswerRepository.save(userAnswerEntity);
@@ -104,7 +108,8 @@ public class ResultServiceImpl implements ResultService {
 //            }
         }
 
-        ResultEntity result = resultRepository.findById(rq.getResultId()).get();
+        ResultEntity result = resultRepository.findById(rq.getResultId())
+                .orElseThrow(() -> new BadRequestException("Result id " + rq.getResultId() + " not found"));
 //        totalQuestion = result.getExam().getQuestions().size();
         result.setSubmitTime(LocalDateTime.now());
         resultRepository.save(result);
@@ -117,7 +122,8 @@ public class ResultServiceImpl implements ResultService {
 
         ResultDetailDTO result = new ResultDetailDTO();
 
-        ResultEntity resultEntity = resultRepository.findById(id).get();
+        ResultEntity resultEntity = resultRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Result id " + id + " not found"));
         result.setExamId(resultEntity.getExam().getId());
         result.setTitle(resultEntity.getExam().getTitle());
         result.setGrade(calculateGrade(resultEntity.getId()));
@@ -244,7 +250,8 @@ public class ResultServiceImpl implements ResultService {
         int totalCorrect = 0;
         int totalQuestion = 0;
 
-        ResultEntity resultEntity = resultRepository.findById(resultId).get();
+        ResultEntity resultEntity = resultRepository.findById(resultId)
+                .orElseThrow(() -> new BadRequestException("Result id " + resultId + " not found"));
         totalQuestion = resultEntity.getExam().getQuestions().size();
         for (UserAnswerEntity userAnswerEntity : resultEntity.getUserAnswers()) {
             AnswerEntity answerEntity = userAnswerEntity.getAnswer();

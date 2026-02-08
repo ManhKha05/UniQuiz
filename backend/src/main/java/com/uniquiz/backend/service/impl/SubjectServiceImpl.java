@@ -41,6 +41,10 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public SubjectDTO addSubject(SubjectDTO subjectDTO) {
+        if (subjectDTO.getId() != null) {
+            SubjectEntity subjectEntity = subjectRepository.findById(subjectDTO.getId())
+                    .orElseThrow(() -> new com.uniquiz.backend.exceptions.BadRequestException("Subject  id " + subjectDTO.getId() + " not found"));
+        }
         SubjectEntity subjectEntity = subjectConverter.toEntity(subjectDTO);
         subjectRepository.save(subjectEntity);
         return subjectConverter.toDTO(subjectEntity);
@@ -51,7 +55,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public SubjectDTO getSubjectById(Integer id) {
         SubjectEntity subjectEntity = subjectRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Subject Not Found"));
+                .orElseThrow(() -> new BadRequestException("Subject id " + id + " not found"));
         return  subjectConverter.toDTO(subjectEntity);
     }
 }

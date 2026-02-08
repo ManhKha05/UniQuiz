@@ -58,7 +58,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) throws ConfigurationException {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         UserEntity userEntity = authService.register(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Đăng ký thành công"));
     }

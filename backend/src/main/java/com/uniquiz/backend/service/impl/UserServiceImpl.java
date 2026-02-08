@@ -1,20 +1,16 @@
 package com.uniquiz.backend.service.impl;
 
 import com.uniquiz.backend.converter.UserConverter;
-import com.uniquiz.backend.dto.auth.RegisterRequest;
 import com.uniquiz.backend.dto.user.UserDTO;
 import com.uniquiz.backend.entity.UserEntity;
+import com.uniquiz.backend.exceptions.BadRequestException;
 import com.uniquiz.backend.repository.UserRepository;
 import com.uniquiz.backend.service.UserService;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +34,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateStatus(Integer id) throws BadRequestException {
+    public UserDTO updateStatus(Integer id) {
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Không tìm thấy tài khoản"));
+                .orElseThrow(() -> new BadRequestException("User id " + id + " not found."));
         if (user.getStatus().equals("ACTIVE")) {
             user.setStatus("BLOCKED");
         } else {

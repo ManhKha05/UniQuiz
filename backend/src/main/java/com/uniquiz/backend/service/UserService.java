@@ -11,5 +11,5 @@ import java.util.List;
 
 public interface UserService {
     Page<UserDTO> getUsers(Integer page, Integer pageSize, String keyword);
-    UserDTO updateStatus(Integer id) throws BadRequestException;
+    UserDTO updateStatus(Integer id);
 }
