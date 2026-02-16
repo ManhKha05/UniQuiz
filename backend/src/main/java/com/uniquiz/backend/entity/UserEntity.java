@@ -44,4 +44,7 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     private List<ResultEntity>  results;
 
+    @OneToMany(mappedBy = "user")
+    private List<RefreshTokenEntity> refreshTokens;
+
 }
