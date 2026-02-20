@@ -11,6 +11,7 @@ import com.uniquiz.backend.dto.question.QuestionResultDTO;
 import com.uniquiz.backend.dto.result.ResultDetailDTO;
 import com.uniquiz.backend.dto.result.ResultHistoryDTO;
 import com.uniquiz.backend.entity.*;
+import com.uniquiz.backend.exceptions.AccessDeniedException;
 import com.uniquiz.backend.exceptions.BadRequestException;
 import com.uniquiz.backend.repository.*;
 import com.uniquiz.backend.security.CustomUserDetails;
@@ -124,6 +125,12 @@ public class ResultServiceImpl implements ResultService {
 
         ResultEntity resultEntity = resultRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Result id " + id + " not found"));
+
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.getAuthorities().toString().contains("ROLE_USER") && !resultEntity.getUser().getUsername().equals(user.getUsername())) {
+            throw new AccessDeniedException("Bạn không có quyền xem bài này");
+        }
+
         result.setExamId(resultEntity.getExam().getId());
         result.setTitle(resultEntity.getExam().getTitle());
         result.setGrade(calculateGrade(resultEntity.getId()));

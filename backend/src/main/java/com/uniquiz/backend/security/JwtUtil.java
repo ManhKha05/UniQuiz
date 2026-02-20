@@ -13,7 +13,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private final String JWT_SECRET = "3a58b1e2512a2c337fd9dfd862fc91dbab6ade09fbf63275541e6fbcdf7976da";
-    private final long JWT_EXPIRATION = 1000 * 5;  //1 hour
+    private final long JWT_EXPIRATION = 1000 * 60 * 60;  //1 hour
 
     private Key getSigningKey() {
         return new SecretKeySpec(JWT_SECRET.getBytes(), "HmacSHA256");
