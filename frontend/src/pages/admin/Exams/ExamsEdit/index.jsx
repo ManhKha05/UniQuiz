@@ -2,7 +2,6 @@ import { Button, Col, Flex, Form, Input, InputNumber, message, Modal, Row, Selec
 import { useEffect, useState } from "react";
 import "./ExamsEdit.scss"
 import { useForm } from "antd/es/form/Form";
-import { FaTrashAlt } from "react-icons/fa";
 import { get, post, put } from "../../../../utils/request";
 
 function ExamsEdit({ mode, record, subjects, onReload }) {
@@ -230,13 +229,15 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
                     {
                       title: 'ID',
                       dataIndex: 'id',
-                      key: 'id'
+                      key: 'id',
+                      width: 100
                     },
                     {
                       title: 'Câu hỏi',
                       dataIndex: 'content',
                       key: 'content',
-                      ellipsis: true
+                      ellipsis: true,
+                      width: 500
                     },
                     {
                       title: 'Mức độ',

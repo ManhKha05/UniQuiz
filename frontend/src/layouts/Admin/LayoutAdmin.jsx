@@ -12,7 +12,7 @@ import { MdDashboard } from "react-icons/md";
 import { BsFillQuestionSquareFill } from "react-icons/bs";
 
 function LayoutAdmin() {
-  const role = localStorage.getItem('role');
+  const role = sessionStorage.getItem('role');
   console.log(role);
   if(role === 'ROLE_USER' || role === null){
     return <Navigate to="/404" replace />;

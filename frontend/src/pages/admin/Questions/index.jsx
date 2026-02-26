@@ -1,8 +1,8 @@
-import { Button, Col, Form, Input, message, Popconfirm, Row, Select, Space, Table, Tag } from "antd";
+import { Col,  Input, message, Row, Select, Space, Table, Tag } from "antd";
 import "./Questions.scss"
 import QuestionsEdit from "./QuestionsEdit"
 import { useEffect, useState } from "react";
-import { del, get } from "../../../utils/request";
+import { get } from "../../../utils/request";
 import { formatDateTime } from "../../../utils/date"
 
 function Questions() {

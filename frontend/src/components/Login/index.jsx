@@ -8,13 +8,14 @@ import { post } from "../../utils/request";
 import { useNavigate } from "react-router-dom"
 import { loginSuccess } from "../../actions/auth";
 
-function Login() {
+function Login({form}) {
   const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
 
   const onFinish = async (e) => {
     const res = await post("auth/login", e)
+
     if (!res.ok) {
       const error = await res.json();
       messageApi.error({
@@ -26,10 +27,11 @@ function Login() {
       });
       return;
     }
+    
     const data = await res.json();
-    localStorage.setItem("token", data.token)
-    localStorage.setItem("user", data.username)
-    localStorage.setItem("role", data.role)
+    sessionStorage.setItem("token", data.token)
+    sessionStorage.setItem("user", data.username)
+    sessionStorage.setItem("role", data.role)
 
     dispatch(loginSuccess());
 
@@ -57,6 +59,7 @@ function Login() {
         name="basic"
         onFinish={onFinish}
         autoComplete="off"
+        form={form}
       >
         <Form.Item
           name="username"

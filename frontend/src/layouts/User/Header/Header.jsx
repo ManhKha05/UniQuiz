@@ -10,7 +10,8 @@ import { PiStudentFill } from "react-icons/pi";
 import { Dropdown, message } from "antd";
 import { logout } from "../../../actions/auth";
 import { useEffect, useState } from "react";
-import { get } from "../../../utils/request";
+import { get, post } from "../../../utils/request";
+import { useQuery } from "@tanstack/react-query";
 
 function Header() {
   const isLogin = useSelector(state => state.authReducer);
@@ -18,33 +19,64 @@ function Header() {
   const [itemsSubjects, setItemsSubjects] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
 
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
+  const token = sessionStorage.getItem("token");
+  const user = sessionStorage.getItem("user");
 
-  const handleLogOut = () => {
-    localStorage.clear();
-    dispatch(logout());
-    messageApi.success({
-      content: "Đã đăng xuất"
-    })
+  const handleLogOut = async () => {
+    try {
+      const res = await post('auth/logout');
+
+      if (!res.ok) {
+        throw new Error();
+      }
+
+      sessionStorage.clear()
+      dispatch(logout());
+      messageApi.success({
+        content: "Đã đăng xuất"
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  useEffect(() => {
-    const fetchApi = async () => {
-      const res = await get("subjects", {
-        status: 'ACTIVE'
-      });
-      const data = await res.json()
-      const items = data.content.map(item => (
-        {
-          key: item.id,
-          label: <Link className="dropdown__item" to={`subjects/${item.id}/exams`}>{item.name}</Link>
-        }
-      ))
-      setItemsSubjects(items);
+  const fetchSubjects = async () => {
+    const res = await get("subjects", {
+      status: 'ACTIVE'
+    });
+    const data = await res.json();
+    return data.content
+  }
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["subjects", "ACTIVE"],
+    queryFn: fetchSubjects
+  })
+  if (isLoading) return;
+
+  const items = data.map(item => (
+    {
+      key: item.id,
+      label: <Link className="dropdown__item" to={`subjects/${item.id}/exams`}>{item.name}</Link>
     }
-    fetchApi();
-  }, [])
+  ))
+
+  // useEffect(() => {
+  //   const fetchApi = async () => {
+  //     const res = await get("subjects", {
+  //       status: 'ACTIVE'
+  //     });
+  //     const data = await res.json()
+  //     const items = data.content.map(item => (
+  //       {
+  //         key: item.id,
+  //         label: <Link className="dropdown__item" to={`subjects/${item.id}/exams`}>{item.name}</Link>
+  //       }
+  //     ))
+  //     setItemsSubjects(items);
+  //   }
+  //   fetchApi();
+  // }, [])
 
   const itemsUser = [
     {
@@ -76,7 +108,7 @@ function Header() {
               <li className="header__item">
                 <Dropdown
                   menu={{
-                    items: itemsSubjects,
+                    items: items,
                     className: "dropdown"
                   }}
                   arrow>
@@ -97,7 +129,8 @@ function Header() {
                   className: "dropdown"
                 }}
                 placement="bottomRight"
-                arrow>
+                arrow
+              >
                 <div className="header__user">
                   <HiMiniUserCircle />{user}
                 </div>

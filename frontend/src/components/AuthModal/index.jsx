@@ -5,14 +5,17 @@ import "./AuthModal.scss";
 import ForgotPassword from "../ForgotPassword";
 import { useDispatch, useSelector } from "react-redux";
 import { closeAuthModal } from "../../actions/authModal";
+import { useForm } from "antd/es/form/Form";
 
 function AuthModal() {
   const modal = useSelector(state => state.AuthModalReducer);
   const dispatch = useDispatch();
+  const [form] = useForm();
   // const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCancel = () => {
     // setIsModalOpen(state.open);
+    form.resetFields();
     dispatch(closeAuthModal());
   };
 
@@ -26,7 +29,7 @@ function AuthModal() {
         className="authmodal"
       >
         {modal.mode === "login" && (
-          <Login />
+          <Login form={form} />
         )}
         {modal.mode === "register" && (
           <Register />

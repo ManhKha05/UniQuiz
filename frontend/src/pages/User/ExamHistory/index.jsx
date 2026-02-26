@@ -7,42 +7,71 @@ import { HiOutlineNewspaper } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom"
 import { get } from "../../../utils/request"
 import { formatDateTime } from "../../../utils/date"
+import { useQuery } from "@tanstack/react-query";
 
 function ExamHistory() {
   const navigate = useNavigate();
-  const [results, setResults] = useState([]);
-  const [subjects, setSubjects] = useState([]);
+  // const [results, setResults] = useState([]);
+  // const [subjects, setSubjects] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [subjectId, setSubjectId] = useState();
   const [messageApi, contextHolder] = message.useMessage();
 
-  useEffect(() => {
-    const fetchApi = async () => {
-      try {
-        const [subjectsRes, resultsRes] = await Promise.all([
-          await get('subjects'),
-          await get('exam-history', {
-            keyword,
-            subjectId: subjectId === 'ALL' ? null : subjectId
-          })
-        ])
+  const fetchSubjects = async () => {
+    const res = await get('subjects');
+    return res.json();
+  }
 
-        if (!resultsRes.ok) {
-          throw new Error();
-        }
-        const subjectsData = await subjectsRes.json();
-        const resultsData = await resultsRes.json();
-        // console.log(data);
-        setSubjects(subjectsData.content);
-        setResults(resultsData.reverse());
+  const fetchExamsHistory = async ({queryKey}) => {
+    const [, { keyword, subjectId }] = queryKey;
 
-      } catch (error) {
-        messageApi.warning("Hết phiên đăng nhập, vui lòng đăng nhập lại")
-        console.log(error)
-      }
-    }
-    fetchApi();
-  }, [keyword, subjectId])
+    const res = await get('exam-history', {
+      keyword,
+      subjectId: subjectId === 'ALL' ? null : subjectId
+    });
+    return res.json();
+  }
+
+  const {data: dataSubjects} = useQuery({
+    queryKey: ["subjects"],
+    queryFn: fetchSubjects
+  })
+  const subjects = dataSubjects?.content || [];
+
+  const {data: dataExams} = useQuery({
+    queryKey: ["exams-history", {keyword, subjectId}],
+    queryFn: fetchExamsHistory
+  })
+
+  const results = dataExams?.reverse() || [];
+
+  // useEffect(() => {
+  //   const fetchApi = async () => {
+  //     try {
+  //       const [subjectsRes, resultsRes] = await Promise.all([
+  //         await get('subjects'),
+  //         await get('exam-history', {
+  //           keyword,
+  //           subjectId: subjectId === 'ALL' ? null : subjectId
+  //         })
+  //       ])
+
+  //       // if (!resultsRes.ok) {
+  //       //   throw new Error();
+  //       // }
+  //       const subjectsData = await subjectsRes.json();
+  //       const resultsData = await resultsRes.json();
+  //       // console.log(data);
+  //       setSubjects(subjectsData.content);
+  //       setResults(resultsData.reverse());
+
+  //     } catch (error) {
+  //       // messageApi.warning("Hết phiên đăng nhập, vui lòng đăng nhập lại")
+  //       console.log(error)
+  //     }
+  //   }
+  //   fetchApi();
+  // }, [keyword, subjectId])
 
   const handleSearch = (e) => {
     if (e.key === 'Enter') {

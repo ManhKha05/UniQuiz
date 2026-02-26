@@ -1,4 +1,4 @@
-const token = localStorage.getItem("token");
+const token = sessionStorage.getItem("token");
 
 const init = {
   isAuthenticated: (token ? true : false)
