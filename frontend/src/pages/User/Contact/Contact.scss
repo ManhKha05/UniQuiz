@@ -1,0 +1,61 @@
+.contact {
+  padding: 100px 0;
+
+    @media (max-width: 576px) {
+      padding: 30px 10px;
+    }
+
+  &__title {
+    color: var(--color-two);
+    font-size: 32px;
+  }
+
+  &__desc {
+    font-size: 16px;
+    margin: 15px 0 20px;
+    text-align: justify;
+    letter-spacing: 0.5px;
+  }
+
+  &__info {
+    padding: 30px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
+
+    &-title {
+      margin-bottom: 20px;
+    }
+
+    &-item {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+
+      svg {
+        color: var(--color-one);
+        height: 20px;
+        width: 20px;
+      }
+
+      span {
+        margin-left: 10px;
+        font-size: 15px;
+      }
+    }
+  }
+
+  &__button {
+    background-color: var(--color-one);
+    padding: 15px 25px;
+    margin-top: 10px;
+    font-size: 18px;
+
+    &:hover {
+      background-color: var(--color-one) !important;
+    }
+  }
+
+  label {
+    font-size: 16px !important;
+  }
+}

@@ -1,0 +1,18 @@
+.questionsAd {
+
+  &__title {
+    text-align: center;
+  }
+
+  &__filter {
+    margin: 20px 0;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+  }
+}

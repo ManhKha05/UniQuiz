@@ -1,0 +1,15 @@
+.login {
+  
+  &__forgot {
+    color: var(--color-two);
+    font-size: 16px;
+    font-weight: 600;
+    text-align: start;
+    margin: 0 0 20px;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

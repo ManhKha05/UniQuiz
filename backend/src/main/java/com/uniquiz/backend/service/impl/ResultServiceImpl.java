@@ -1,0 +1,317 @@
+package com.uniquiz.backend.service.impl;
+
+import com.uniquiz.backend.dto.answer.AnswerDoingDTO;
+import com.uniquiz.backend.dto.answer.AnswerResultDTO;
+import com.uniquiz.backend.dto.answer.AnswerSubmitDTO;
+import com.uniquiz.backend.dto.exam.AdminExamResultDTO;
+import com.uniquiz.backend.dto.exam.ExamDoingDTO;
+import com.uniquiz.backend.dto.exam.SubmitExamRequest;
+import com.uniquiz.backend.dto.question.QuestionDoingDTO;
+import com.uniquiz.backend.dto.question.QuestionResultDTO;
+import com.uniquiz.backend.dto.result.ResultDetailDTO;
+import com.uniquiz.backend.dto.result.ResultHistoryDTO;
+import com.uniquiz.backend.entity.*;
+import com.uniquiz.backend.exceptions.AccessDeniedException;
+import com.uniquiz.backend.exceptions.BadRequestException;
+import com.uniquiz.backend.repository.*;
+import com.uniquiz.backend.security.CustomUserDetails;
+import com.uniquiz.backend.service.ResultService;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+public class ResultServiceImpl implements ResultService {
+
+    @Autowired
+    private ResultRepository resultRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ExamRepository examRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private UserAnswerRepository userAnswerRepository;
+
+    @Override
+    @Transactional
+    public ExamDoingDTO startExam(Integer examId) {
+        ResultEntity result = new ResultEntity();
+        UserDetails user =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserEntity userEntity = userRepository.findByUsername(user.getUsername());
+        result.setUser(userEntity);
+        ExamEntity examEntity = examRepository.findById(examId)
+                .orElseThrow(() -> new BadRequestException("Exam id" + examId + " not found"));
+        result.setExam(examEntity);
+        result.setStartTime(LocalDateTime.now());
+        resultRepository.save(result);
+
+        ExamDoingDTO exam = new ExamDoingDTO();
+        exam.setSubjectName(examEntity.getSubject().getName());
+        exam.setTitle(examEntity.getTitle());
+        exam.setDuration(examEntity.getDuration());
+        exam.setResultId(result.getId());
+
+        List<QuestionDoingDTO> questions = new ArrayList<>();
+        List<QuestionEntity> questionEntities = examEntity.getQuestions();
+        for (QuestionEntity questionEntity : questionEntities) {
+            QuestionDoingDTO question = new QuestionDoingDTO();
+            question.setId(questionEntity.getId());
+            question.setType(questionEntity.getType());
+            question.setContent(questionEntity.getContent());
+
+            List<AnswerDoingDTO> answers = questionEntity.getAnswers().stream().map(a -> new AnswerDoingDTO(
+                    a.getId(),
+                    a.getContent()
+            )).toList();
+            question.setAnswers(answers);
+            questions.add(question);
+        }
+        exam.setQuestions(questions);
+        return exam;
+    }
+
+    @Override
+    @Transactional
+    public void submitExam(SubmitExamRequest rq) {
+        int totalCorrect = 0;
+        int totalQuestion = 0;
+
+        ResultEntity result = resultRepository.findById(rq.getResultId())
+                .orElseThrow(() -> new BadRequestException("Result id " + rq.getResultId() + " not found"));
+
+        for (AnswerSubmitDTO answer : rq.getAnswers()) {
+
+            QuestionEntity question = questionRepository.findById(answer.getQuestionId())
+                    .orElseThrow(() -> new BadRequestException("Question id" + answer.getQuestionId() + " not found"));
+
+            List<Integer> userAnswerIds = answer.getAnswerIds();
+
+            for(Integer userAnswerId : userAnswerIds){
+
+                AnswerEntity answerEntity = answerRepository.findById(userAnswerId)
+                        .orElseThrow(() -> new BadRequestException("Answer id " + userAnswerId + " not found"));
+
+                UserAnswerEntity userAnswerEntity = new UserAnswerEntity();
+                userAnswerEntity.setResult(result);
+                userAnswerEntity.setQuestion(question);
+                userAnswerEntity.setAnswer(answerEntity);
+
+                userAnswerRepository.save(userAnswerEntity);
+            }
+
+            List<Integer> correctAnswerIds = question.getAnswers().stream()
+                    .filter(a -> a.getIsCorrect() == 1)
+                    .map(AnswerEntity::getId)
+                    .toList();
+
+            Set<Integer> userAnswerSet = new HashSet<>(userAnswerIds);
+            Set<Integer> correctAnswerSet = new HashSet<>(correctAnswerIds);
+
+            if (userAnswerSet.equals(correctAnswerSet)) {
+                totalCorrect++;
+            }
+        }
+
+        totalQuestion = result.getExam().getQuestions().size();
+
+        result.setSubmitTime(LocalDateTime.now());
+        result.setScore(1.0 * totalCorrect / totalQuestion * 10);
+        resultRepository.save(result);
+    }
+
+    @Override
+    public ResultDetailDTO getResult(Integer id) {
+        int totalCorrect = 0;
+        int totalWrong = 0;
+
+        ResultDetailDTO result = new ResultDetailDTO();
+
+        ResultEntity resultEntity = resultRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Result id " + id + " not found"));
+
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.getAuthorities().toString().contains("ROLE_USER") && !resultEntity.getUser().getUsername().equals(user.getUsername())) {
+            throw new AccessDeniedException("Bạn không có quyền xem bài này");
+        }
+
+        result.setExamId(resultEntity.getExam().getId());
+        result.setTitle(resultEntity.getExam().getTitle());
+        result.setGrade(calculateGrade(resultEntity.getId()));
+
+        int totalQuestion = resultEntity.getExam().getQuestions().size();
+        result.setTotalQuestions(totalQuestion);
+
+        LocalDateTime start = resultEntity.getStartTime();
+        LocalDateTime end = resultEntity.getSubmitTime();
+        result.setDuration(Duration.between(start, end).toSeconds());
+
+        result.setSubmittedDate(resultEntity.getSubmitTime());
+
+        List<QuestionResultDTO>  questions = new ArrayList<>();
+        for (QuestionEntity questionEntity : resultEntity.getExam().getQuestions()) {
+            QuestionResultDTO question = new QuestionResultDTO();
+
+            question.setId(questionEntity.getId());
+            question.setContent(questionEntity.getContent());
+
+            List<Integer> correctAnswerId = new ArrayList<>();
+            for (AnswerEntity answerEntity : questionEntity.getAnswers()) {
+                AnswerResultDTO answer = new AnswerResultDTO(answerEntity.getId(), answerEntity.getContent());
+                if (answerEntity.getIsCorrect() == 1) {
+                    correctAnswerId.add(answerEntity.getId());
+                }
+                question.getAnswers().add(answer);
+            }
+            question.setCorrectAnswerId(correctAnswerId);
+
+            List<Integer> selectedAnswerId = new ArrayList<>();
+            List<UserAnswerEntity> userAnswerEntities = userAnswerRepository.findByResultIdAndQuestionId(id, questionEntity.getId());
+
+            for(UserAnswerEntity userAnswerEntity : userAnswerEntities){
+                selectedAnswerId.add(userAnswerEntity.getAnswer().getId());
+            }
+            question.setSelectedAnswerId(selectedAnswerId);
+
+            if (new HashSet<>(correctAnswerId).equals(new HashSet<>(selectedAnswerId))) {
+                totalCorrect++;
+                question.setStatus("Correct");
+            } else if (!selectedAnswerId.isEmpty()) {
+                totalWrong++;
+                question.setStatus("Wrong");
+            }
+            questions.add(question);
+        }
+
+        result.setTotalCorrect(totalCorrect);
+        result.setTotalWrong(totalWrong);
+
+        result.setQuestions(questions);
+
+        return result;
+    }
+
+    @Override
+    public List<ResultHistoryDTO> getResultList(String keyword, Integer subjectId) {
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<ResultEntity> results = resultRepository.findAllByUserId(user.getId(), keyword, subjectId);
+
+        List<ResultHistoryDTO> resultHistory = new ArrayList<>();
+        for (ResultEntity resultEntity : results) {
+            ResultHistoryDTO result = new ResultHistoryDTO();
+
+            result.setResultId(resultEntity.getId());
+            result.setExamTitle(resultEntity.getExam().getTitle());
+            result.setSubjectName(resultEntity.getExam().getSubject().getName());
+            result.setDuration(resultEntity.getExam().getDuration());
+            result.setTotalQuestions(resultEntity.getExam().getQuestions().size());
+            result.setScore(calculateGrade(resultEntity.getId()));
+            result.setSubmittedAt(resultEntity.getSubmitTime());
+
+            resultHistory.add(result);
+        }
+        return resultHistory;
+    }
+
+    @Override
+    public Page<AdminExamResultDTO> getResultListAdmin(
+            Integer page,  Integer pageSize, String keyword, Integer subjectId, Integer examId, String sort
+    ) {
+//        Sort sortBy = null;
+//        if (sort.equals("newest")) {
+//            sortBy = Sort.by("submitTime").descending();
+//        } else if (sort.equals("desc")) {
+//            sortBy = Sort.by("score").descending();
+//        } else if (sort.equals("asc")) {
+//            sortBy = Sort.by("score").ascending();
+//        }
+
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        List<ResultEntity> resultEntities = resultRepository.findResultsAdmin(keyword, subjectId, examId);
+        ArrayList<AdminExamResultDTO> list = new ArrayList<>( resultEntities.stream().map(r -> new AdminExamResultDTO(
+                            r.getId(),
+                            r.getUser().getFullName(),
+                            r.getUser().getUsername(),
+                            r.getExam().getTitle(),
+                            r.getExam().getSubject().getName(),
+                            calculateGrade(r.getId()),
+                            Duration.between(r.getStartTime(), r.getSubmitTime()).toSeconds(),
+                            r.getSubmitTime()
+                        ))
+                        .toList());
+        if ("newest".equals(sort)) {
+            list.sort(Comparator.comparing(AdminExamResultDTO::getSubmitTime).reversed());
+
+        } else if ("desc".equals(sort)) {
+            list.sort(Comparator.comparing(AdminExamResultDTO::getScore).reversed());
+
+        } else if ("asc".equals(sort)) {
+            list.sort(Comparator.comparing(AdminExamResultDTO::getScore));
+        }
+
+        int start = page * pageSize;
+        int end = Math.min(start + pageSize, list.size());
+
+        List<AdminExamResultDTO> pageContent = list.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, list.size());
+    }
+
+    @Override
+    public double calculateGrade(Integer resultId) {
+        int totalCorrect = 0;
+        int totalQuestion = 0;
+
+        ResultEntity resultEntity = resultRepository.findById(resultId)
+                .orElseThrow(() -> new BadRequestException("Result id " + resultId + " not found"));
+
+        totalQuestion = resultEntity.getExam().getQuestions().size();
+
+        Set<Integer> questionIds =  resultEntity.getUserAnswers().stream()
+                .map(userAnswerEntity -> userAnswerEntity.getQuestion().getId())
+                .collect(Collectors.toSet());
+
+        for (Integer questionId : questionIds) {
+            QuestionEntity question = questionRepository.findById(questionId).orElse(null);
+
+            List<Integer> correctAnswerIds = question.getAnswers().stream()
+                    .filter(a -> a.getIsCorrect() == 1)
+                    .map(AnswerEntity::getId)
+                    .toList();
+
+            List<Integer> userAnswerIds = userAnswerRepository.findByResultIdAndQuestionId(resultId, questionId).stream()
+                    .map(q -> q.getAnswer().getId())
+                    .toList();
+
+            Set<Integer> correctSet = new HashSet<>(correctAnswerIds);
+            Set<Integer> userSet = new HashSet<>(userAnswerIds);
+
+            if (correctSet.equals(userSet)) {
+                totalCorrect++;
+            }
+        }
+        return (1.0 *  totalCorrect) / totalQuestion * 10 ;
+    }
+
+
+}

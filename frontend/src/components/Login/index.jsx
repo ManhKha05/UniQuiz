@@ -1,0 +1,92 @@
+import { Button, Form, Input, message } from "antd";
+import "./Login.scss";
+import { FaUserCircle } from "react-icons/fa";
+import { RiLockPasswordFill } from "react-icons/ri";
+import { useDispatch } from "react-redux";
+import { closeAuthModal, forgotPasswordModal, registerModal } from "../../actions/authModal";
+import { post } from "../../utils/request";
+import { useNavigate } from "react-router-dom"
+import { loginSuccess } from "../../actions/auth";
+
+function Login({form}) {
+  const dispatch = useDispatch();
+  const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
+
+  const onFinish = async (e) => {
+    const res = await post("auth/login", e)
+
+    if (!res.ok) {
+      const error = await res.json();
+      messageApi.error({
+        style: {
+          // marginTop: "30px",
+          fontSize: '16px'
+        },
+        content: error.message,
+      });
+      return;
+    }
+    
+    const data = await res.json();
+    sessionStorage.setItem("token", data.token)
+    sessionStorage.setItem("user", data.username)
+    sessionStorage.setItem("role", data.role)
+
+    dispatch(loginSuccess());
+
+    if (data.role === 'ROLE_ADMIN') {
+      navigate('/admin')
+    } else {
+      dispatch(closeAuthModal())
+      setTimeout(() => {
+        messageApi.success({
+          style: {
+          // marginTop: "30px",
+          fontSize: '16px'
+        },
+          content: 'Đăng nhập thành công!',
+        });
+      }, 200)
+    }
+  }
+
+  return (
+    <>
+      {contextHolder}
+      <h2 className="authmodal__title">Đăng nhập</h2>
+      <Form
+        name="basic"
+        onFinish={onFinish}
+        autoComplete="off"
+        form={form}
+      >
+        <Form.Item
+          name="username"
+          rules={[{ required: true, message: 'Vui lòng điền thông tin!' }]}
+        >
+          {/* <FaUserCircle className="authmodal__icon" /> */}
+          <Input prefix={<FaUserCircle className="authmodal__icon" />} className="authmodal__input" placeholder="Nhập tài khoản" />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Vui lòng điền thông tin!' }]}
+        >
+          {/* <RiLockPasswordFill className="authmodal__icon" /> */}
+          <Input.Password prefix={<RiLockPasswordFill className="authmodal__icon" />} className="authmodal__input" placeholder="Nhập mật khẩu" />
+        </Form.Item>
+        <p className="login__forgot" onClick={() => dispatch(forgotPasswordModal())}>Quên mật khẩu</p>
+
+        <Form.Item label={null}>
+          <Button className="authmodal__button" type="primary" htmlType="submit">
+            Đăng nhập
+          </Button>
+        </Form.Item>
+        <p className="authmodal__footer">Bạn chưa có tài khoản? <span onClick={() => dispatch(registerModal())}>Đăng ký ngay</span></p>
+      </Form>
+    </>
+  )
+}
+
+export default Login;

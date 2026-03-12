@@ -1,0 +1,49 @@
+.users {
+
+  &__title {
+    text-align: center;
+  }
+
+  &__filter {
+    margin: 30px 0;
+
+    &-input {
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      svg {
+        position: absolute;
+        font-size: 20px;
+        margin: 0 10px;
+      }
+
+      input {
+        padding: 5px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        padding-left: 40px;
+        border: 2px solid #ddd;
+        outline: none;
+      }
+    }
+  }
+
+  .ant-table-thead {
+    font-size: 16px;
+  }
+
+  .ant-table-tbody {
+    font-size: 15px;
+  }
+
+  .ant-tag {
+    font-size: 14px;
+  }
+
+  a {
+    color: #1677ff;
+  }
+
+}
