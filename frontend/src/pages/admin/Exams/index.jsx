@@ -9,6 +9,7 @@ import ExamsEdit from "./ExamsEdit";
 import { useEffect, useState } from "react";
 import { get } from "../../../utils/request"
 import { formatDate } from "../../../utils/date"
+import ExamDetail from "./ExamDetail";
 
 function Exams() {
   const [viewMode, setViewMode] = useState('grid')
@@ -23,6 +24,9 @@ function Exams() {
   const [subjectId, setSubjectId] = useState();
   const [status, setStatus] = useState();
   const [sort, setSort] = useState('NEWEST');
+
+  const [openDetail, setOpenDetail] = useState(false);
+  const [selectedExam, setSelectedExam] = useState({});
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -127,7 +131,9 @@ function Exams() {
       title: 'Hành động',
       key: 'action',
       render: (_, record) => (
-        <ExamsEdit record={record} subjects={subjects} onReload={handleReload} />
+        <div onClick={(e) => e.stopPropagation()}>
+          <ExamsEdit record={record} subjects={subjects} onReload={handleReload} />
+        </div>
       )
     }
 
@@ -240,11 +246,15 @@ function Exams() {
             <Row gutter={[20, 20]}>
               {(exams || []).map(item => (
                 <Col span={8} key={item.id}>
-                  <div className="examsAd-item">
+                  <div className="examsAd-item"
+                    onClick={() => {
+                      setOpenDetail(true);
+                      setSelectedExam(item);
+                    }}>
                     <h2 className="examsAd-item__title">
                       {item.title}
                     </h2>
-                    
+
                     {item.status === 'ACTIVE' && <Tag color="green" variant="outlined" className="examsAd-item__tag">HOẠT ĐỘNG</Tag>}
                     {item.status === 'INACTIVE' && <Tag style={{ fontSize: "14px" }} color="red" className="examsAd-item__tag">Ngừng hoạt động</Tag>}
                     {item.status === 'DRAFT' && <Tag color="lime" variant="solid" className="examsAd-item__tag">NHÁP</Tag>}
@@ -277,7 +287,9 @@ function Exams() {
                         <p>ĐIỂM TB</p>
                       </div>
                     </div>
-                    <ExamsEdit mode='EDIT' record={item} subjects={subjects} onReload={handleReload} />
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <ExamsEdit mode='EDIT' record={item} subjects={subjects} onReload={handleReload} />
+                    </div>
                   </div>
                 </Col>
               ))}
@@ -316,9 +328,28 @@ function Exams() {
               setPage(pagination.current)
               setPageSize(pagination.pageSize)
             }}
+            onRow={(record) => ({
+              onClick: () => {
+                setOpenDetail(true);
+                setSelectedExam(record);
+              },
+              style: { cursor: "pointer" }
+            }
+            )}
           />
         )}
       </div>
+
+
+      {openDetail && (
+        <ExamDetail
+          open={openDetail}
+          record={selectedExam}
+          onCancel={() => setOpenDetail(false)}
+          subjects={subjects}
+        />
+      )}
+
     </>
   )
 }

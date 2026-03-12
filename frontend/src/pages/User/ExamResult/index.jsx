@@ -91,12 +91,12 @@ function ExamResult() {
                   {(question.answers || []).map((answer, index) => (
                     <div
                       className={"answer__item " +
-                        (answer.id === question.selectedAnswerId ? (
-                          answer.id === question.correctAnswerId
+                        (question.selectedAnswerId.includes(answer.id) ? (
+                          question.correctAnswerId.includes(answer.id)
                             ? "answer__item--selected answer__item--correct"
                             : "answer__item--selected"
                         ) : (
-                          answer.id === question.correctAnswerId
+                          question.correctAnswerId.includes(answer.id)
                             ? "answer__item--correct"
                             : ""
                         ))
@@ -106,12 +106,12 @@ function ExamResult() {
                       <span className="answer__label">{String.fromCharCode(65 + index)} </span>
                       <span className="answer__content">{answer.content}</span>
                       <span className="answer__badge">
-                        {answer.id === question.selectedAnswerId ? (
-                          answer.id === question.correctAnswerId
+                        {question.selectedAnswerId.includes(answer.id) ? (
+                          question.correctAnswerId.includes(answer.id)
                             ? "✓ Đáp án của bạn - Chính xác"
                             : "✗ Đáp án của bạn - Sai"
                         ) : (
-                          answer.id === question.correctAnswerId
+                          question.correctAnswerId.includes(answer.id)
                             ? "✓ Đáp án đúng"
                             : ""
                         )}

@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { CheckCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { get, patch } from "../../../utils/request";
 import { formatDateTime } from "../../../utils/date";
+import { useQuery } from "@tanstack/react-query";
+import { data } from "react-router-dom";
 
 function ContactFeedback() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,16 +24,52 @@ function ContactFeedback() {
   const [notificationApi, contextHolder] = notification.useNotification();
   const [reload, setReload] = useState(false);
 
+  // const fetchContacts = async () => {
+  //   const res = await get('admin/contacts', {
+  //     page: page - 1,
+  //     pageSize,
+  //     keyword,
+  //     status
+  //   })
+
+  //   if (!res.ok) {
+  //     throw new Error();
+  //   }
+  //   return res.json();
+  // }
+
+  // const fetchDashboard = async () => {
+  //   const res = await get('admin/contacts/dashboard');
+
+  //   if (!res.ok) throw new Error();
+  //   return res.json()
+  // }
+
+  // const { data: dataContacts } = useQuery({
+  //   queryKey: ["contacts", {reload, page, pageSize, keyword, status}],
+  //   queryFn: fetchContacts
+  // })
+  // const contactsList = dataContacts?.content;
+  // const total = dataContacts?.totalElements;
+
+  // const { data: dashboard, isLoading: loadingDashboard } = useQuery({
+  //   queryKey: ["contacts-dashboard"],
+  //   queryFn: fetchDashboard
+  // }) 
+
+  // if (loadingDashboard) return null
+
 
   useEffect(() => {
     const fetchApi = async () => {
       try {
         const [contactsListRes, dashboardRes] = await Promise.all([
-          get('admin/contacts', { 
+          get('admin/contacts', {
             page: page - 1,
             pageSize,
-            keyword, 
-            status }),
+            keyword,
+            status
+          }),
           get('admin/contacts/dashboard')
         ])
 

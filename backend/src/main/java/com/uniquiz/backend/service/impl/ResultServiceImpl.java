@@ -28,15 +28,17 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ResultServiceImpl implements ResultService {
 
     @Autowired
     private ResultRepository resultRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -74,6 +76,7 @@ public class ResultServiceImpl implements ResultService {
         for (QuestionEntity questionEntity : questionEntities) {
             QuestionDoingDTO question = new QuestionDoingDTO();
             question.setId(questionEntity.getId());
+            question.setType(questionEntity.getType());
             question.setContent(questionEntity.getContent());
 
             List<AnswerDoingDTO> answers = questionEntity.getAnswers().stream().map(a -> new AnswerDoingDTO(
@@ -93,26 +96,46 @@ public class ResultServiceImpl implements ResultService {
         int totalCorrect = 0;
         int totalQuestion = 0;
 
-        for (AnswerSubmitDTO answer : rq.getAnswers()) {
-            AnswerEntity answerEntity = answerRepository.findById(answer.getAnswerId())
-                    .orElseThrow(() -> new BadRequestException("Answer id " + answer.getAnswerId() + " not found"));
-
-            UserAnswerEntity userAnswerEntity = new UserAnswerEntity();
-            userAnswerEntity.setResult(resultRepository.findById(rq.getResultId())
-                    .orElseThrow(() -> new BadRequestException("Result id " + rq.getResultId() + " not found")));
-            userAnswerEntity.setQuestion(answerEntity.getQuestion());
-            userAnswerEntity.setAnswer(answerEntity);
-            userAnswerRepository.save(userAnswerEntity);
-
-//            if (answerEntity.getIsCorrect() == 1) {
-//                totalCorrect++;
-//            }
-        }
-
         ResultEntity result = resultRepository.findById(rq.getResultId())
                 .orElseThrow(() -> new BadRequestException("Result id " + rq.getResultId() + " not found"));
-//        totalQuestion = result.getExam().getQuestions().size();
+
+        for (AnswerSubmitDTO answer : rq.getAnswers()) {
+
+            QuestionEntity question = questionRepository.findById(answer.getQuestionId())
+                    .orElseThrow(() -> new BadRequestException("Question id" + answer.getQuestionId() + " not found"));
+
+            List<Integer> userAnswerIds = answer.getAnswerIds();
+
+            for(Integer userAnswerId : userAnswerIds){
+
+                AnswerEntity answerEntity = answerRepository.findById(userAnswerId)
+                        .orElseThrow(() -> new BadRequestException("Answer id " + userAnswerId + " not found"));
+
+                UserAnswerEntity userAnswerEntity = new UserAnswerEntity();
+                userAnswerEntity.setResult(result);
+                userAnswerEntity.setQuestion(question);
+                userAnswerEntity.setAnswer(answerEntity);
+
+                userAnswerRepository.save(userAnswerEntity);
+            }
+
+            List<Integer> correctAnswerIds = question.getAnswers().stream()
+                    .filter(a -> a.getIsCorrect() == 1)
+                    .map(AnswerEntity::getId)
+                    .toList();
+
+            Set<Integer> userAnswerSet = new HashSet<>(userAnswerIds);
+            Set<Integer> correctAnswerSet = new HashSet<>(correctAnswerIds);
+
+            if (userAnswerSet.equals(correctAnswerSet)) {
+                totalCorrect++;
+            }
+        }
+
+        totalQuestion = result.getExam().getQuestions().size();
+
         result.setSubmitTime(LocalDateTime.now());
+        result.setScore(1.0 * totalCorrect / totalQuestion * 10);
         resultRepository.save(result);
     }
 
@@ -151,32 +174,34 @@ public class ResultServiceImpl implements ResultService {
             question.setId(questionEntity.getId());
             question.setContent(questionEntity.getContent());
 
-            int correctAnswer = 0;
+            List<Integer> correctAnswerId = new ArrayList<>();
             for (AnswerEntity answerEntity : questionEntity.getAnswers()) {
                 AnswerResultDTO answer = new AnswerResultDTO(answerEntity.getId(), answerEntity.getContent());
                 if (answerEntity.getIsCorrect() == 1) {
-                    correctAnswer = answerEntity.getId();
+                    correctAnswerId.add(answerEntity.getId());
                 }
                 question.getAnswers().add(answer);
             }
-            question.setCorrectAnswerId(correctAnswer);
+            question.setCorrectAnswerId(correctAnswerId);
 
-            int selectedAnswerId = -1;
-            UserAnswerEntity userAnswerEntity = userAnswerRepository.findByResultIdAndQuestionId(id,  questionEntity.getId());
-            if (userAnswerEntity != null) {
-                selectedAnswerId = userAnswerEntity.getAnswer().getId();
+            List<Integer> selectedAnswerId = new ArrayList<>();
+            List<UserAnswerEntity> userAnswerEntities = userAnswerRepository.findByResultIdAndQuestionId(id, questionEntity.getId());
+
+            for(UserAnswerEntity userAnswerEntity : userAnswerEntities){
+                selectedAnswerId.add(userAnswerEntity.getAnswer().getId());
             }
             question.setSelectedAnswerId(selectedAnswerId);
 
-            if (correctAnswer == selectedAnswerId) {
+            if (new HashSet<>(correctAnswerId).equals(new HashSet<>(selectedAnswerId))) {
                 totalCorrect++;
                 question.setStatus("Correct");
-            } else if (selectedAnswerId != -1) {
+            } else if (!selectedAnswerId.isEmpty()) {
                 totalWrong++;
                 question.setStatus("Wrong");
             }
             questions.add(question);
         }
+
         result.setTotalCorrect(totalCorrect);
         result.setTotalWrong(totalWrong);
 
@@ -259,11 +284,29 @@ public class ResultServiceImpl implements ResultService {
 
         ResultEntity resultEntity = resultRepository.findById(resultId)
                 .orElseThrow(() -> new BadRequestException("Result id " + resultId + " not found"));
-        totalQuestion = resultEntity.getExam().getQuestions().size();
-        for (UserAnswerEntity userAnswerEntity : resultEntity.getUserAnswers()) {
-            AnswerEntity answerEntity = userAnswerEntity.getAnswer();
 
-            if (answerEntity.getIsCorrect() == 1) {
+        totalQuestion = resultEntity.getExam().getQuestions().size();
+
+        Set<Integer> questionIds =  resultEntity.getUserAnswers().stream()
+                .map(userAnswerEntity -> userAnswerEntity.getQuestion().getId())
+                .collect(Collectors.toSet());
+
+        for (Integer questionId : questionIds) {
+            QuestionEntity question = questionRepository.findById(questionId).orElse(null);
+
+            List<Integer> correctAnswerIds = question.getAnswers().stream()
+                    .filter(a -> a.getIsCorrect() == 1)
+                    .map(AnswerEntity::getId)
+                    .toList();
+
+            List<Integer> userAnswerIds = userAnswerRepository.findByResultIdAndQuestionId(resultId, questionId).stream()
+                    .map(q -> q.getAnswer().getId())
+                    .toList();
+
+            Set<Integer> correctSet = new HashSet<>(correctAnswerIds);
+            Set<Integer> userSet = new HashSet<>(userAnswerIds);
+
+            if (correctSet.equals(userSet)) {
                 totalCorrect++;
             }
         }

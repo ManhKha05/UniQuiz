@@ -1,6 +1,5 @@
 package com.uniquiz.backend.controller.admin;
 
-import com.uniquiz.backend.dto.question.QuestionDTO;
 import com.uniquiz.backend.dto.question.QuestionDetailDTO;
 import com.uniquiz.backend.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class QuestionAdminController {
             @RequestParam(required = false) Integer subjectId,
             @RequestParam(required = false) String level
     ) {
-        Page<QuestionDTO> questions = questionService.getQuestions(page, pageSize, keyword, subjectId, level);
+        Page<QuestionDetailDTO> questions = questionService.getQuestions(page, pageSize, keyword, subjectId, level);
         return ResponseEntity.ok(questions);
     }
 

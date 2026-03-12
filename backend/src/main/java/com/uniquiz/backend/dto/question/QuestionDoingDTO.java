@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 public class QuestionDoingDTO {
     private Integer id;
+    private String type;
     private String content;
     private List<AnswerDoingDTO> answers;
 }

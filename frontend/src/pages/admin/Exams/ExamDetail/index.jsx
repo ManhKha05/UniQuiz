@@ -1,24 +1,27 @@
-import { Button, Col, Flex, Form, Input, InputNumber, message, Modal, Row, Select, Table, Tag } from "antd";
+import { Col, Flex, Form, Input, InputNumber, Modal, Row, Select, Table, Tag } from "antd";
+import "./ExamDetail.scss";
 import { useEffect, useState } from "react";
-import "./ExamsEdit.scss"
+import { get } from "../../../../utils/request";
 import { useForm } from "antd/es/form/Form";
-import { get, post, put } from "../../../../utils/request";
 
-function ExamsEdit({ mode, record, subjects, onReload }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+function ExamDetail({ open, record, onCancel, subjects }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [total, setTotal] = useState(0);
-  const [selectedRow, setSelectedRow] = useState();
-  const [form] = useForm();
   const [keyword, setKeyword] = useState();
-  const [subjectId, setSubjectId] = useState();
   const [level, setLevel] = useState();
   const [questions, setQuestions] = useState([]);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [subjectId, setSubjectId] = useState();
+  const [form] = useForm();
 
-  // console.log(record)
+  console.log(record);
 
+  useEffect(() => {
+    if (record) {
+      form.setFieldsValue(record);
+    }
+  }, [record])
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -27,116 +30,47 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
           page: page - 1,
           pageSize,
           keyword,
-          subjectId,
+          subjectId: record.subjectId,
           level: level === 'ALL' ? null : level
         });
         if (!res.ok) {
           throw new Error()
         }
         const data = await res.json();
-        setQuestions(data.content);
+        const selectedQuestion = data.content
+          .filter(it => (record.questionIds?.includes(it.id)));
+        setQuestions(selectedQuestion);
         setTotal(data.totalElements);
       } catch (error) {
         console.log(error)
       }
     }
     fetchApi()
-  }, [page, pageSize, keyword, subjectId, level])
-
-  const showModalCreate = () => {
-    form.resetFields();
-    setIsModalOpen(true);
-  };
-
-  const showModalUpdate = () => {
-    form.setFieldsValue(record);
-    setSubjectId(record.subjectId);
-    setSelectedRow(record.questionIds.map(id => Number(id)))
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    form.resetFields();
-    setIsModalOpen(false);
-  };
-
-
-  const rowSelection = {
-    selectedRowKeys: selectedRow,
-    onChange: (newSelectedRow) => {
-      setSelectedRow(newSelectedRow);
-      form.setFieldsValue({
-        questionIds: newSelectedRow.map(id => Number(id))
-      });
-    }
-  };
+  }, [page, pageSize, keyword, level, record])
 
   const handleSearch = (e) => {
     if (e.key === 'Enter') {
-      setPage(1);
       setKeyword(e.target.value);
     }
   }
 
-  const onFinish = (e) => {
-    console.log(e);
-    const fetchApi = async () => {
-      try {
-        let res = null;
-        mode === 'CREATE' ? (
-          res = await post('admin/exams', e)
-        ) : (
-          res = await put('admin/exams', e)
-        )
-
-        if (!res.ok) {
-          throw new Error()
-        }
-
-        messageApi.success(mode === 'CREATE' ? "Tạo đề thi mới thành công" : "Chỉnh sửa đề thi thành công")
-        setIsModalOpen(false);
-        onReload()
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchApi();
-  }
-
-
   return (
     <>
-      {contextHolder}
-      {mode === 'CREATE' ? (
-        <div style={{ textAlign: 'end' }}>
-          <Button type="primary" onClick={showModalCreate}>
-            + Tạo đề mới
-          </Button>
-        </div>
-      ) : (
-        <Button onClick={(e) => {
-          showModalUpdate();
-        }} style={{ color: "blue", textWrap: "nowrap" }}>Chỉnh sửa</Button>
-      )}
-
       <Modal
-        open={isModalOpen}
-        onCancel={handleCancel}
+        open={open}
+        onCancel={onCancel}
         footer={null}
         style={{ top: 50 }}
         width={1000}
       >
         <h1>
-          {mode === 'CREATE' ? 'Tạo đề thi mới' : 'Chỉnh sửa đề thi'}
+          Chi tiết đề thi
         </h1>
         <hr />
         <Form
-          // initialValues={{ remember: true }}
-          onFinish={onFinish}
           layout="vertical"
           className="examsAd__form"
           form={form}
-
         >
           <Form.Item name="id" hidden>
             <Input />
@@ -148,7 +82,7 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
                 name="title"
                 rules={[{ required: true, message: 'Không được bỏ trống' }]}
               >
-                <Input placeholder="VD: Luyện tập số 1 - Lập trình Web" />
+                <Input placeholder="VD: Luyện tập số 1 - Lập trình Web" readOnly />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -156,14 +90,14 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
                 label="Môn học"
                 name="subjectId"
                 rules={[{ required: true, message: 'Không được bỏ trống' }]}
+
               >
                 <Select
-                  placeholder="Chọn môn học"
                   options={subjects.map(item => ({
                     value: item.id,
                     label: item.name
                   }))}
-                  onChange={e => setSubjectId(e)}
+                  open={false}
                 />
               </Form.Item>
             </Col>
@@ -173,7 +107,7 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
                 name="duration"
                 rules={[{ required: true, message: 'Không được bỏ trống' }]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: "100%" }} readOnly />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -189,6 +123,7 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
                     { value: 'ACTIVE', label: 'Hoạt động' },
                     { value: 'INACTIVE', label: 'Lưu trữ' },
                   ]}
+                  open={false}
                 />
               </Form.Item>
             </Col>
@@ -226,12 +161,11 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
             <Col span={24}>
               <Form.Item
                 name="questionIds"
-                label="Chọn câu hỏi"
                 rules={[{ required: true, message: 'Vui lòng chọn ít nhất 1 câu hỏi' }]}
               >
                 <Table
                   rowKey="id"
-                  rowSelection={rowSelection}
+                  // rowSelection={rowSelection}
                   columns={[
                     {
                       title: 'ID',
@@ -298,18 +232,7 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
               </Form.Item>
             </Col>
 
-            <Col span={24}>
-              <Form.Item label={null}>
-                <Flex justify="end" gap="middle" style={{ marginTop: "20px" }} >
-                  <Button htmlType="button" onClick={handleCancel}>
-                    Hủy
-                  </Button>
-                  <Button type="primary" onClick={() => form.submit()}>
-                    Lưu đề thi
-                  </Button>
-                </Flex>
-              </Form.Item>
-            </Col>
+
           </Row>
         </Form >
       </Modal >
@@ -317,4 +240,4 @@ function ExamsEdit({ mode, record, subjects, onReload }) {
   )
 }
 
-export default ExamsEdit;
+export default ExamDetail;

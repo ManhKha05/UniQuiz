@@ -3,9 +3,11 @@ package com.uniquiz.backend.dto.answer;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class AnswerSubmitDTO {
     private Integer questionId;
-    private Integer answerId;
+    private List<Integer> answerIds;
 }

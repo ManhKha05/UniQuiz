@@ -12,20 +12,33 @@ import { get } from "../../../utils/request"
 
 function Dashboard() {
   const [dashboard, setDashBoard] = useState({});
+  const [topUserGrade, setTopUserGrade] = useState([]);
+  const [topUserTry, setTopUserTry] = useState([]);
 
   useEffect(() => {
     const fetchApi = async () => {
       try {
-        const res = await get('admin/dashboard');
-        const data = await res.json();
-        setDashBoard(data);
+        const [dashboardRes, topUserGradeRes, topUserTryRes] = await Promise.all(
+          [
+            get('admin/dashboard'),
+            get('admin/top-user-grade'),
+            get('admin/top-user-try')
+          ]
+        );
+        const dashboardData = await dashboardRes.json();
+        const topUserGrade = await topUserGradeRes.json();
+        const topUserTry = await topUserTryRes.json();
+        setDashBoard(dashboardData);
+        setTopUserGrade(topUserGrade);
+        setTopUserTry(topUserTry)
       } catch (error) {
         console.log("Lỗi Admin Dashboard: ", error)
       }
     }
     fetchApi()
   }, [])
-  console.log(dashboard)
+  console.log(topUserGrade)
+  console.log(topUserTry)
 
   const configRecent = {
     data: dashboard.attemptsRecent || [],
@@ -148,6 +161,50 @@ function Dashboard() {
                   </div>
                   <div className="number">
                     <h2>{item.totalAttempts}</h2>
+                    <p>LƯỢT THI</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Col>
+
+          <Col span={12}>
+            <div className="dashboard__top-exam-list">
+              <h2> <FaFire /> Top 5 thí sinh ĐTB cao nhất</h2>
+              {(topUserGrade || []).map((item, index) => (
+                <div className="dashboard__top-exam-item" key={index}>
+                  <div className={"rank rank-" + (index + 1)}>{index + 1}</div>
+                  <div className="info">
+                    <div className="name">{item.name}</div>
+                    {/* <div className="meta">
+                      <FaAtlas />
+                      {item.subject}
+                    </div> */}
+                  </div>
+                  <div className="number">
+                    <h2>{Math.round(item.grade * 100) / 100}</h2>
+                    <p>ĐTB</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Col>
+
+          <Col span={12}>
+            <div className="dashboard__top-exam-list">
+              <h2> <FaFire /> Top 5 thí sinh làm nhiều bài thi nhất</h2>
+              {(topUserTry || []).map((item, index) => (
+                <div className="dashboard__top-exam-item" key={index}>
+                  <div className={"rank rank-" + (index + 1)}>{index + 1}</div>
+                  <div className="info">
+                    <div className="name">{item.name}</div>
+                    {/* <div className="meta">
+                      <FaAtlas />
+                      {item.subject}
+                    </div> */}
+                  </div>
+                  <div className="number">
+                    <h2>{item.total}</h2>
                     <p>LƯỢT THI</p>
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 package com.uniquiz.backend.converter;
 
-import com.uniquiz.backend.dto.question.QuestionDTO;
 import com.uniquiz.backend.dto.question.QuestionDetailDTO;
+import com.uniquiz.backend.entity.AnswerEntity;
 import com.uniquiz.backend.entity.QuestionEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +13,12 @@ public class QuestionConverter {
     @Autowired
     private ModelMapper modelMapper;
 
-    public QuestionDTO toDTO(QuestionEntity questionEntity) {
-        return modelMapper.map(questionEntity, QuestionDTO.class);
-    }
-
     public QuestionDetailDTO toDetailDTO(QuestionEntity questionEntity) {
-        return modelMapper.map(questionEntity, QuestionDetailDTO.class);
+        QuestionDetailDTO questionDetailDTO = modelMapper.map(questionEntity, QuestionDetailDTO.class);
+        for (int i = 0; i < questionEntity.getAnswers().size(); i++) {
+            AnswerEntity answerEntity = questionEntity.getAnswers().get(i);
+            if(answerEntity.getIsCorrect() == 1) questionDetailDTO.getCorrectAnswer().add(i);
+        }
+        return questionDetailDTO;
     }
 }

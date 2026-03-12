@@ -62,9 +62,9 @@ function ExamDo() {
     const payload = {
       resultId: exam.resultId,
       answers: Object.entries(selectedAnswers).map(
-        ([questionId, answerId]) => ({
+        ([questionId, answerIds]) => ({
           questionId: Number(questionId),
-          answerId
+          answerIds
         })
       )
     }
@@ -76,11 +76,29 @@ function ExamDo() {
     setIsModalOpen(false);
   };
 
-  const handleChange = (questionId, answerId) => {
-    setSelectedAnswers({
-      ...selectedAnswers,
-      [questionId]: answerId
-    })
+  const handleChange = (questionId, answerId, type) => {
+
+    if (type === "MULTIPLE") {
+      const currentAnswers = selectedAnswers[questionId] || [];
+
+      if (currentAnswers.includes(answerId)) {
+        setSelectedAnswers({
+          ...selectedAnswers,
+          [questionId]: currentAnswers.filter(id => id != answerId)
+        })
+      } else {
+        setSelectedAnswers({
+          ...selectedAnswers,
+          [questionId]: [...currentAnswers, answerId]
+        })
+      }
+    } else {
+      setSelectedAnswers({
+        ...selectedAnswers, 
+        [questionId]: [answerId]
+      })
+    }
+
   }
 
   // console.log(timeLeft);
@@ -112,10 +130,10 @@ function ExamDo() {
                     <label className="examdo__option" key={answer.id}>
                       <input
                         className="examdo__option-radio"
-                        type="radio"
+                        type={question.type === "MULTIPLE" ? "checkbox" : "radio"}
                         name={question.id}
                         value={answer.id}
-                        onChange={() => handleChange(question.id, answer.id)}
+                        onChange={() => handleChange(question.id, answer.id, question.type)}
                       />
                       <span>{String.fromCharCode(65 + index)}. {answer.content}</span>
                     </label>
@@ -123,22 +141,6 @@ function ExamDo() {
                 </div>
               </div>
             ))}
-            {/* <div className="examdo__question">
-              <div className="examdo__question-text">
-                <span className="examdo__question-number">1.</span>
-                Nhận thức nào dưới đây của Đảng về kinh tế thị trường định hướng xã hội chủ nghĩa trước đổi mới:
-              </div>
-              <div className="examdo__options">
-                <label className="examdo__option">
-                  <input className="examdo__option-radio" type="radio" name="1" id="1" value="1" />
-                  <span>A. Coi kinh tế thị trường là cái riêng có của chủ nghĩa tư bản, không phải là thành tựu của văn minh chung nhân loại.</span>
-                </label>
-                <label className="examdo__option">
-                  <input className="examdo__option-radio" type="radio" name="1" id="1" value="1" />
-                  <span>B. Phát triển nền kinh tế thị trường định hướng xã hội chủ nghĩa là mô hình phát triển tổng quát của nước ta trong thời kỳ quá độ lên chủ nghĩa xã hội.</span>
-                </label>
-              </div>
-            </div> */}
           </div>
           <div className="examdo__footer">
             <button className="button" onClick={showModal}>Nộp bài</button>

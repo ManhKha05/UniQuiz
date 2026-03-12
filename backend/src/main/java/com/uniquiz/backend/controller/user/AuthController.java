@@ -65,7 +65,6 @@ public class AuthController {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60); //7 ngày
         response.addCookie(cookie);
 
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
@@ -123,7 +122,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping
+    @PostMapping("auth/refresh")
     public ResponseEntity<?> refreshToken(
             @CookieValue(value = "refreshToken") String refreshToken,
             HttpServletResponse response
@@ -132,15 +131,15 @@ public class AuthController {
         UserEntity userEntity = tokenEntity.getUser();
         CustomUserDetails userDetails = new CustomUserDetails(userEntity);
         String newAccessToken = jwtUtil.generateToken(userDetails);
-        refreshTokenService.saveRefreshToken(refreshToken, userEntity);
+//        refreshTokenService.saveRefreshToken(refreshToken, userEntity);
 
-        Cookie cookie = new Cookie("refreshToken", newAccessToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // HTTPS
-        cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
-
-        response.addCookie(cookie);
+//        Cookie cookie = new Cookie("refreshToken", newAccessToken);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(true); // HTTPS
+//        cookie.setPath("/");
+//        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
+//
+//        response.addCookie(cookie);
 
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
     }

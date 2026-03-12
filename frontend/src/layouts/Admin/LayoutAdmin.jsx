@@ -2,7 +2,7 @@ import { Layout, Menu } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import "./LayoutAdmin.scss";
-import { Link, Outlet, Navigate } from "react-router-dom";
+import { Link, Outlet, Navigate, useLocation } from "react-router-dom";
 import logo from "../../assets/images/UniQuiz-r.png"
 import { FaUsersCog, FaFileSignature  } from "react-icons/fa";
 import { MdContacts  } from "react-icons/md";
@@ -13,7 +13,8 @@ import { BsFillQuestionSquareFill } from "react-icons/bs";
 
 function LayoutAdmin() {
   const role = sessionStorage.getItem('role');
-  console.log(role);
+  let location = useLocation();
+  location = location.pathname.substring(7);
   if(role === 'ROLE_USER' || role === null){
     return <Navigate to="/404" replace />;
   } 
@@ -73,7 +74,7 @@ function LayoutAdmin() {
           <Sider width="250px" theme="light" breakpoint="lg">
             <Menu
               // onClick={onClick}
-              defaultSelectedKeys={['dashboard']}
+              defaultSelectedKeys={[location]}
               mode="inline"
               items={items}
               className="menu"

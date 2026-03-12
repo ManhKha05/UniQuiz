@@ -61,6 +61,21 @@ function Questions() {
       key: 'subject'
     },
     {
+      title: 'LOẠI',
+      key: 'type',
+      width: 120,
+      render: (_, { type }) => {
+        switch (type) {
+          case "BOOLEAN":
+            return "Đúng sai"
+          case "SINGLE":
+            return "Một đáp án"
+          case "MULTIPLE":
+            return "Nhiều đáp án"
+        }
+      }
+    },
+    {
       title: 'ĐỘ KHÓ',
       key: 'level',
       render: (_, { level }) => {

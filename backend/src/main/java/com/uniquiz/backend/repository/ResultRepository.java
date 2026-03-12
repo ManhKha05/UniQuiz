@@ -1,6 +1,8 @@
 package com.uniquiz.backend.repository;
 
 import com.uniquiz.backend.dto.adminDashboard.AttemptsRecentDTO;
+import com.uniquiz.backend.dto.adminDashboard.TopUserGradeDTO;
+import com.uniquiz.backend.dto.adminDashboard.TopUserTryDTO;
 import com.uniquiz.backend.entity.ResultEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,4 +61,22 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Integer> {
             AND (:examId IS NULL OR e.id = :examId)
     """)
     List<ResultEntity> findResultsAdmin(String keyword, Integer subjectId, Integer examId);
+
+    @Query("""
+        select r.user.fullName as name, avg(r.score) as grade
+            from ResultEntity r
+        group by r.user.id
+        order by grade desc
+        limit 5
+    """)
+    List<Object[]> findUserGrade();
+
+    @Query("""
+        select r.user.fullName as name, count(r.id) as total
+            from ResultEntity r
+        group by r.user.id
+        order by total desc
+        limit 5+
+    """)
+    List<Object[]> findUserTry();
 }

@@ -14,6 +14,6 @@ public class QuestionResultDTO {
     private String content;
     private String status = null;
     private List<AnswerResultDTO> answers = new ArrayList<>();
-    private Integer selectedAnswerId;
-    private Integer correctAnswerId;
+    private List<Integer> selectedAnswerId;
+    private List<Integer> correctAnswerId;
 }

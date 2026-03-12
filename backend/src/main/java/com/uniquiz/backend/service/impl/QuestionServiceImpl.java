@@ -2,7 +2,6 @@ package com.uniquiz.backend.service.impl;
 
 import com.uniquiz.backend.converter.QuestionConverter;
 import com.uniquiz.backend.dto.answer.AnswerDTO;
-import com.uniquiz.backend.dto.question.QuestionDTO;
 import com.uniquiz.backend.dto.question.QuestionDetailDTO;
 import com.uniquiz.backend.entity.AnswerEntity;
 import com.uniquiz.backend.entity.QuestionEntity;
@@ -38,15 +37,15 @@ public class QuestionServiceImpl implements QuestionService {
     private SubjectRepository subjectRepository;
 
     @Override
-    public Page<QuestionDTO> getQuestions(Integer page, Integer size, String keyword, Integer subjectId, String level) {
+    public Page<QuestionDetailDTO> getQuestions(Integer page, Integer size, String keyword, Integer subjectId, String level) {
         if (page == null || size == null) {
             page = 0;
             size = Integer.MAX_VALUE;
         }
         Pageable pageable = PageRequest.of(page, size);
         Page<QuestionEntity> questions = questionRepository.search(keyword, subjectId, level, pageable);
-        Page<QuestionDTO> questionDTOS = questions.map(questionEntity -> {
-            QuestionDTO questionDTO = questionConverter.toDTO(questionEntity);
+        Page<QuestionDetailDTO> questionDTOS = questions.map(questionEntity -> {
+            QuestionDetailDTO questionDTO = questionConverter.toDetailDTO(questionEntity);
             questionDTO.setSubjectName(questionEntity.getSubject().getName());
             return questionDTO;
         });
@@ -60,17 +59,19 @@ public class QuestionServiceImpl implements QuestionService {
         QuestionDetailDTO questionDetailDTO = questionConverter.toDetailDTO(questionEntity);
         questionDetailDTO.setSubjectId(questionEntity.getSubject().getId());
         
-        List<AnswerDTO> answers = new ArrayList<>();
-        for (int i = 0; i < questionEntity.getAnswers().size(); i++) {
-            AnswerEntity answerEntity = questionEntity.getAnswers().get(i);
-            AnswerDTO answerDTO = new AnswerDTO();
-            answerDTO.setId(answerEntity.getId());
-            answerDTO.setContent(answerEntity.getContent());
-            answerDTO.setIsCorrect(answerEntity.getIsCorrect());
-            if (answerEntity.getIsCorrect() == 1) questionDetailDTO.setCorrectAnswer(i);
-            answers.add(answerDTO);
-        }
-        questionDetailDTO.setAnswers(answers);
+//        List<AnswerDTO> answers = new ArrayList<>();
+//        List<Integer> correctAnswers = new ArrayList<>();
+//        for (int i = 0; i < questionEntity.getAnswers().size(); i++) {
+//            AnswerEntity answerEntity = questionEntity.getAnswers().get(i);
+//            AnswerDTO answerDTO = new AnswerDTO();
+//            answerDTO.setId(answerEntity.getId());
+//            answerDTO.setContent(answerEntity.getContent());
+//            answerDTO.setIsCorrect(answerEntity.getIsCorrect());
+//            if (answerEntity.getIsCorrect() == 1) correctAnswers.add(i);
+//            answers.add(answerDTO);
+//        }
+//        questionDetailDTO.setCorrectAnswer(correctAnswers);
+//        questionDetailDTO.setAnswers(answers);
         return questionDetailDTO;
     }
 
@@ -83,6 +84,7 @@ public class QuestionServiceImpl implements QuestionService {
         questionEntity.setSubject(subject);
         questionEntity.setContent(rq.getContent());
         questionEntity.setLevel(rq.getLevel());
+        questionEntity.setType(rq.getType());
 
         List<AnswerEntity> answers = new ArrayList<>();
         for (int i = 0; i < rq.getAnswers().size(); i++) {
@@ -91,7 +93,7 @@ public class QuestionServiceImpl implements QuestionService {
             AnswerEntity answerEntity = new AnswerEntity();
             answerEntity.setContent(answer.getContent());
             answerEntity.setQuestion(questionEntity);
-            if (i == rq.getCorrectAnswer()) {
+            if (rq.getCorrectAnswer().contains(i)) {
                 answerEntity.setIsCorrect(1);
             } else  {
                 answerEntity.setIsCorrect(0);
@@ -122,7 +124,7 @@ public class QuestionServiceImpl implements QuestionService {
             AnswerEntity answerEntity = answerRepository.findById(answer.getId())
                     .orElseThrow(() -> new BadRequestException("Answer id " + answer.getId() + " not found"));
             answerEntity.setContent(answer.getContent());
-            if (i == rq.getCorrectAnswer()) {
+            if (rq.getCorrectAnswer().contains(i)) {
                 answerEntity.setIsCorrect(1);
             } else {
                 answerEntity.setIsCorrect(0);

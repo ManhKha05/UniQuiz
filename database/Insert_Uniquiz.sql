@@ -94,4 +94,19 @@ CREATE TABLE reset_password_token (
     used_at DATETIME NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES USER (id)
-)
+);
+
+CREATE TABLE refresh_tokens (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    token VARCHAR(500) NOT NULL UNIQUE,
+    user_id INT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    revoked BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_refresh_user
+      FOREIGN KEY (user_id)
+      REFERENCES user(id)
+      ON DELETE CASCADE
+);
+

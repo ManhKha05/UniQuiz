@@ -1,8 +1,6 @@
 package com.uniquiz.backend.service.impl;
 
-import com.uniquiz.backend.dto.adminDashboard.AdminDashboardDTO;
-import com.uniquiz.backend.dto.adminDashboard.AttemptsRecentDTO;
-import com.uniquiz.backend.dto.adminDashboard.TopExamDTO;
+import com.uniquiz.backend.dto.adminDashboard.*;
 import com.uniquiz.backend.repository.ExamRepository;
 import com.uniquiz.backend.repository.ResultRepository;
 import com.uniquiz.backend.repository.UserRepository;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,5 +55,33 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                         .toList();
         adminDashboardDTO.setTopExam(topExams);
         return adminDashboardDTO;
+    }
+
+    @Override
+    public List<TopUserGradeDTO> getTopUserGrades() {
+//        List<Object[]> topUserGrades =resultRepository.findUserGrade();
+        List<TopUserGradeDTO> topUserGrades =
+                resultRepository.findUserGrade()
+                        .stream()
+                        .map(e -> new TopUserGradeDTO(
+                                (String) e[0],
+                                (Double) e[1]
+                        ))
+                        .toList();
+        return topUserGrades;
+    }
+
+    @Override
+    public List<TopUserTryDTO> getTopUserTry() {
+//        List<TopUserTryDTO> topUserTry =resultRepository.findUserTry();
+        List<TopUserTryDTO> topUserTry =
+                resultRepository.findUserTry()
+                        .stream()
+                        .map(e -> new TopUserTryDTO(
+                                (String) e[0],
+                                (Long) e[1]
+                        ))
+                        .toList();
+        return topUserTry;
     }
 }

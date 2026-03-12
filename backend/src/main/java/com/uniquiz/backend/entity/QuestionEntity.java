@@ -23,6 +23,9 @@ public class QuestionEntity {
     @Column(name = "level")
     private String level;
 
+    @Column(name = "type")
+    private String type;
+
     @Column(name = "is_deleted", insertable = false)
     private Integer isDeleted;
 

@@ -58,9 +58,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/exams/request", "/results/").authenticated()
+                        .requestMatchers("/exams/request", "/results/**", "exam-history").authenticated()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex
